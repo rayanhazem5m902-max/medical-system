@@ -24,7 +24,8 @@ import {
   Contact2,
   Clock,
   CheckCircle,
-  ShoppingCart
+  ShoppingCart,
+  Microscope
 } from 'lucide-react';
 import './dashboard.css';
 
@@ -33,7 +34,7 @@ type Lang = 'ar' | 'en';
 const translations = {
   ar: {
     dashboard: 'لوحة القيادة',
-    patients: 'المرضى',
+    patients: 'سجلات المرضى',
     appointments: 'المواعيد',
     reception: 'الاستقبال',
     doctors: 'الأطباء',
@@ -71,11 +72,12 @@ const translations = {
     absentDoctors: 'الأطباء الغائبون',
     hospitalOverview: 'نظرة عامة على المستشفى',
     addPatient: 'إضافة مريض',
-    language: 'English'
+    language: 'English',
+    laboratory: 'المعامل'
   },
   en: {
     dashboard: 'Dashboard',
-    patients: 'Patients',
+    patients: 'Patient Records',
     appointments: 'Appointments',
     reception: 'Reception',
     doctors: 'Doctors',
@@ -113,7 +115,8 @@ const translations = {
     absentDoctors: 'Absent Doctors',
     hospitalOverview: 'Hospital Overiew',
     addPatient: 'Add Patient',
-    language: 'العربية'
+    language: 'العربية',
+    laboratory: 'Laboratory'
   }
 };
 
@@ -132,6 +135,7 @@ export default function Dashboard() {
     { id: 'reception', label: t.reception, icon: ClipboardList },
     { id: 'doctors', label: t.doctors, icon: UserCog },
     { id: 'pharmacy', label: t.pharmacy, icon: Pill },
+    { id: 'laboratory', label: t.laboratory, icon: Microscope },
   ];
 
   const managementItems = [
@@ -165,14 +169,11 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className={`min-h-screen bg-bg flex font-['Cairo'] ${isRTL ? 'flex-row-reverse' : 'flex-row'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-bg flex font-['Cairo'] ${isRTL ? 'flex-row' : 'flex-row-reverse'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Sidebar */}
-      <aside className={`fixed lg:relative z-40 h-full w-64 bg-sidebar text-white transition-all duration-300 transform ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0 shadow-2xl overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10`}>
+      <aside className={`fixed lg:relative z-40 h-full w-64 bg-white text-gray-500 transition-all duration-300 transform ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0 shadow-xl overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200`}>
         <div className="p-6 pb-2 flex items-center gap-3">
-          <div className="bg-primary p-2 rounded-xl shadow-lg shadow-blue-900/40">
-            <Activity className="w-6 h-6" />
-          </div>
-          <span className="text-xl font-bold tracking-tight uppercase">Al-Shifa</span>
+          <span className="text-xl font-bold tracking-tight uppercase text-gray-900">Al-Shifa</span>
         </div>
 
         <nav className="mt-6 px-4 space-y-1">
@@ -182,9 +183,11 @@ export default function Dashboard() {
               onClick={() => {
                 if (item.id === 'patients') navigate('/patient');
                 if (item.id === 'dash') navigate('/dashboard');
+                if (item.id === 'reception') navigate('/reception');
                 if (item.id === 'pharmacy') navigate('/dispense');
+                if (item.id === 'laboratory') navigate('/laboratory');
               }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group ${item.active ? 'bg-sidebar-active text-white shadow-lg shadow-blue-600/30' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group ${item.active ? 'bg-primary/10 text-primary shadow-sm' : 'text-gray-400 hover:bg-gray-50 hover:text-primary'}`}
             >
               <item.icon className={`w-5 h-5 ${item.active ? '' : 'transition-transform group-hover:scale-110'}`} />
               <span className="font-medium text-sm">{item.label}</span>
@@ -193,13 +196,13 @@ export default function Dashboard() {
 
           {/* Management Section */}
           <div className="pt-4 pb-2 px-4">
-            <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.management}</h4>
+            <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t.management}</h4>
           </div>
 
           {managementItems.map((item) => (
             <button
               key={item.id}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-slate-400 hover:bg-white/5 hover:text-white"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-gray-400 hover:bg-gray-50 hover:text-primary"
             >
               <item.icon className="w-5 h-5 transition-transform group-hover:scale-110" />
               <span className="font-medium text-sm">{item.label}</span>
@@ -209,7 +212,7 @@ export default function Dashboard() {
           {/* System Settings - Link to /setting */}
           <button
             onClick={() => navigate('/setting')}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-slate-400 hover:bg-white/5 hover:text-white mt-4 border-t border-white/5 pt-4 mb-6"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-400 hover:bg-gray-50 hover:text-primary mt-4 border-t border-gray-100 pt-4 mb-6"
           >
             <Settings className="w-5 h-5" />
             <span className="font-medium text-sm">{t.settings}</span>
@@ -313,7 +316,11 @@ export default function Dashboard() {
           {/* Patients Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {patientStats.map((stat, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group relative overflow-hidden">
+              <div
+                key={idx}
+                onClick={() => navigate('/patient')}
+                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group relative overflow-hidden cursor-pointer"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm font-medium">{stat.label}</p>

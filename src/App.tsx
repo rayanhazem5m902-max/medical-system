@@ -16,9 +16,9 @@ const translations: Record<Lang, Record<string, string>> = {
     forgotPassword: 'Forgot Password?',
     login: 'Login',
     or: 'or',
-    noAccount: "Don't have an account?",
     signUp: 'Sign up',
     langLabel: 'العربية',
+    invalidCredentials: 'Invalid credentials! Please check your username and password.',
   },
   ar: {
     portalTitle: 'البوابة الطبية',
@@ -32,9 +32,9 @@ const translations: Record<Lang, Record<string, string>> = {
     forgotPassword: 'نسيت كلمة المرور؟',
     login: 'دخول',
     or: 'أو',
-    noAccount: 'ليس لديك حساب؟',
     signUp: 'إنشاء حساب',
     langLabel: 'English',
+    invalidCredentials: 'بيانات الدخول غير صحيحة! يرجى التأكد من اسم المستخدم وكلمة المرور.',
   },
 };
 
@@ -169,8 +169,9 @@ function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLang] = useState<Lang>('ar');
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const t = translations[lang];
   const isRTL = lang === 'ar';
@@ -187,13 +188,13 @@ function App() {
       // إذا كانت البيانات صحيحة، انتقل لصفحة السجل الطبي
       navigate('/dashboard');
     } else {
-      // إذا كانت خاطئة، أظهر رسالة تنبيه (يمكنك تحسينها لاحقاً)
-      alert(lang === 'ar' ? 'بيانات الدخول غير صحيحة!' : 'Invalid credentials!');
+      // إذا كانت خاطئة، أظهر رسالة خطأ داخل الواجهة
+      setError(t.invalidCredentials);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row font-['Tajawal']" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen flex flex-col lg:flex-row font-['Cairo']" dir={isRTL ? 'rtl' : 'ltr'}>
 
       {/* Language Toggle Button - Small Globe */}
       <div className="fixed top-4 z-50" style={{ right: isRTL ? 'auto' : '16px', left: isRTL ? '16px' : 'auto' }}>
@@ -318,8 +319,11 @@ function App() {
                   type="text"
                   id="username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className={`w-full py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'}`}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  className={`w-full py-3 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'}`}
                   placeholder={t.usernamePlaceholder}
                   required
                   dir={isRTL ? 'rtl' : 'ltr'}
@@ -340,8 +344,11 @@ function App() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${isRTL ? 'pr-10 pl-12' : 'pl-10 pr-12'}`}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  className={`w-full py-3 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${isRTL ? 'pr-10 pl-12' : 'pl-10 pr-12'}`}
                   placeholder={t.passwordPlaceholder}
                   required
                   dir={isRTL ? 'rtl' : 'ltr'}
@@ -359,6 +366,15 @@ function App() {
                 </button>
               </div>
             </div>
+
+            {error && (
+              <div className={`p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300`}>
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{error}</span>
+              </div>
+            )}
 
             {/* Forgot Password */}
             <div className={`flex ${isRTL ? 'justify-start' : 'justify-end'}`}>

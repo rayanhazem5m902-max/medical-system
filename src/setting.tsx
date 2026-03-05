@@ -72,7 +72,7 @@ const Setting: React.FC = () => {
   };
 
   return (
-    <div dir="rtl" className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div dir="rtl" className={`min-h-screen transition-colors duration-300 font-['Cairo'] ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Toast Notification */}
       {toast.show && (
         <div className="fixed top-4 left-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">

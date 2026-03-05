@@ -1,0 +1,1 @@
+﻿src/patient.tsx(17,3): error TS6133: 'Syringe' is declared but its value is never read.

@@ -5,12 +5,15 @@ import "./patient.css";
 import "./dashboard.css";
 import "./setting.css";
 import App from "./App";
-import { Setting } from "./setting";
+import Setting from "./setting";
 import Dashboard from "./dashboard";
 import Patient from "./patient";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dispense from "./dispense";
+import Laboratory from "./laboratory";
+import Reception from "./reception";
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,6 +24,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/patient" element={<Patient />} />
         <Route path="/dispense" element={<Dispense />} />
+        <Route path="/laboratory" element={<Laboratory />} />
+        <Route path="/reception" element={<Reception />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
