@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sidebar: #1a4fa0;
+  --color-sidebar-hover: #2359b3;
+  --color-sidebar-active: #2b7de9;
+  --color-primary: #2b7de9;
+  --color-primary-light: #eef5ff;
+  --color-danger: #ef4444;
+  --color-danger-light: #fee2e2;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-success: #10b981;
+  --color-success-light: #d1fae5;
+  --color-info: #6366f1;
+  --color-info-light: #e0e7ff;
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvaIo4bJ1VRw.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvaIo4bJ1VRw.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvaIo4bJ1VRw.woff2') format('woff2');
+}
+
+* {
+  font-family: 'Cairo', 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f4f8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1cfe0;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ab0c8;
+}
