@@ -102,7 +102,11 @@ const Setting: React.FC = () => {
             {menuItems.map((item, index) => (
               <button
                 key={index}
-                onClick={() => index === 0 && navigate('/dashboard')}
+                onClick={() => {
+                  if (index === 0) navigate('/dashboard');
+                  if (index === 1) navigate('/patients');
+                  if (index === 2) navigate('/appointment');
+                }}
                 className={`p-3 rounded-xl transition-all duration-200 group relative ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-50'}`}
                 title={item.label}
               >

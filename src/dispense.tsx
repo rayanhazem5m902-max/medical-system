@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Circle, User, FileText, Pill, DollarSign, Clock, ChevronRight, LogOut, Package, AlertCircle, Bell, LayoutDashboard, Users, Calendar, ClipboardList, UserCog } from 'lucide-react';
+import { CheckCircle2, Circle, User, FileText, Pill, DollarSign, Clock, LogOut, Package, AlertCircle, Bell, LayoutDashboard, Users, Calendar, ClipboardList, UserCog, Microscope, UsersRound, Contact2, Briefcase, Warehouse, Layers, Wallet, Coins, Settings } from 'lucide-react';
 
 interface Medication {
   id: number;
@@ -40,17 +40,30 @@ export default function App() {
     );
   };
 
+  const [showNotifications, setShowNotifications] = useState(false);
   const selectedCount = medications.filter(m => m.selected).length;
 
   const navigate = useNavigate();
 
   const sidebarItems = [
-    { id: 'dash', label: 'لوحة القيادة', icon: LayoutDashboard },
-    { id: 'patients', label: 'سجلات المرضى', icon: Users },
-    { id: 'appts', label: 'المواعيد', icon: Calendar },
-    { id: 'reception', label: 'الاستقبال', icon: ClipboardList },
-    { id: 'doctors', label: 'الأطباء', icon: UserCog },
-    { id: 'pharmacy', label: 'الصيدلية', icon: Pill, active: true },
+    { id: 'dash', label: 'لوحة القيادة', icon: LayoutDashboard, active: window.location.pathname === '/dashboard' },
+    { id: 'patients', label: 'سجلات المرضى', icon: Users, active: window.location.pathname === '/patients' },
+    { id: 'appts', label: 'المواعيد', icon: Calendar, active: window.location.pathname === '/appointment' },
+    { id: 'reception', label: 'الاستقبال', icon: ClipboardList, active: window.location.pathname === '/reception' },
+    { id: 'doctors', label: 'الأطباء', icon: UserCog, active: window.location.pathname === '/doctor' },
+    { id: 'pharmacy', label: 'الصيدلي', icon: Pill, active: true },
+    { id: 'laboratory', label: 'المعامل', icon: Microscope, active: window.location.pathname === '/laboratory' },
+  ];
+
+  const managementItems = [
+    { id: 'doc-mgmt', label: "إدارة الأطباء", icon: UsersRound },
+    { id: 'emp-mgmt', label: "إدارة الموظفين", icon: Contact2 },
+    { id: 'serv-mgmt', label: "إدارة الخدمات", icon: Briefcase },
+    { id: 'pharma-mgmt', label: "إدارة الصيدلية والمخزون", icon: Warehouse },
+    { id: 'dept-mgmt', label: "إدارة الأقسام", icon: Layers },
+    { id: 'fin-mgmt', label: "الإدارة المالية", icon: Wallet },
+    { id: 'fin-reports', label: "التقارير المالية", icon: FileText },
+    { id: 'payroll-mgmt', label: "إدارة الرواتب", icon: Coins }
   ];
 
   return (
@@ -66,11 +79,13 @@ export default function App() {
             <button
               key={item.id}
               onClick={() => {
-                if (item.id === 'patients') navigate('/patient');
+                if (item.id === 'patients') navigate('/patients');
                 if (item.id === 'dash') navigate('/dashboard');
                 if (item.id === 'reception') navigate('/reception');
                 if (item.id === 'pharmacy') navigate('/dispense');
                 if (item.id === 'laboratory') navigate('/laboratory');
+                if (item.id === 'appts') navigate('/appointment');
+                if (item.id === 'doctors') navigate('/dashboard');
               }}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group ${item.active ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'}`}
             >
@@ -78,50 +93,38 @@ export default function App() {
               <span className="font-bold text-xs">{item.label}</span>
             </button>
           ))}
+
+          {/* Management Section */}
+          <div className="pt-4 pb-2 px-4">
+            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">الإدارة</h4>
+          </div>
+
+          {managementItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.id === 'serv-mgmt') navigate('/services');
+                if (item.id === 'doc-mgmt') navigate('/doctor-management');
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+            >
+              <item.icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+              <span className="font-bold text-xs">{item.label}</span>
+            </button>
+          ))}
+
+          {/* System Settings */}
+          <button
+            onClick={() => navigate('/setting')}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 mt-2 border-t border-slate-100 pt-2 mb-4"
+          >
+            <Settings className="w-4 h-4" />
+            <span className="font-bold text-xs">الإعدادات</span>
+          </button>
         </nav>
       </aside>
 
-      {/* Secondary Sidebar - Incoming Prescriptions */}
-      <div className="w-72 bg-white border-l border-slate-200 flex flex-col">
-        <div className="p-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-600" />
-            الوصفات الواردة
-          </h2>
-          <p className="text-sm text-slate-500 mt-1 flex items-center gap-1"><span className="font-bold text-blue-600">12</span> وصفة في قائمة الانتظار</p>
-        </div>
-        <div className="flex-1 overflow-y-auto">
-          {prescriptions.map((prescription) => (
-            <div
-              key={prescription.id}
-              className={`p-4 border-b border-slate-100 cursor-pointer transition-all hover:bg-slate-50 ${prescription.status === 'In Progress' ? 'bg-blue-50/50 border-r-4 border-r-blue-600' : ''
-                }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="font-medium text-slate-800 text-sm">{prescription.patientName}</p>
-                  <p className="text-xs text-slate-500 mt-0.5" dir="ltr">{prescription.fileNumber}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 transform rotate-180" />
-              </div>
-              <div className="flex items-center justify-between mt-3">
-                <span
-                  className={`text-[10px] px-2.5 py-1 rounded-full font-bold ${prescription.status === 'In Progress'
-                    ? 'bg-amber-100 text-amber-700'
-                    : 'bg-emerald-100 text-emerald-700'
-                    }`}
-                >
-                  {prescription.status === 'In Progress' ? 'قيد التجهيز' : 'جديد'}
-                </span>
-                <span className="text-[10px] text-slate-500 flex items-center gap-1 font-medium">
-                  <Clock className="w-3.5 h-3.5" />
-                  {prescription.timeAgo.replace('mins ago', 'دقائق مضت')}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -139,9 +142,47 @@ export default function App() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm font-semibold text-slate-600 hidden sm:block">الأربعاء، 24 مايو</span>
-              <div className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 cursor-pointer">
+              <div className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 cursor-pointer" onClick={() => setShowNotifications(!showNotifications)}>
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+
+                {/* Notifications Popover */}
+                {showNotifications && (
+                  <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden text-right" onClick={(e) => e.stopPropagation()}>
+                    <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                      <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-blue-600" />
+                        الوصفات الواردة
+                      </h3>
+                      <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full">12 وصفة في الانتظار</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {prescriptions.map((prescription) => (
+                        <div
+                          key={prescription.id}
+                          className={`p-4 border-b border-slate-50 cursor-pointer transition-all hover:bg-slate-50 ${prescription.status === 'In Progress' ? 'bg-blue-50/30' : ''}`}
+                        >
+                          <div className="flex items-start justify-between mb-1">
+                            <span className="text-xs text-slate-400 font-medium" dir="ltr">{prescription.fileNumber}</span>
+                            <p className="font-bold text-slate-800 text-sm">{prescription.patientName}</p>
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {prescription.timeAgo.replace('mins ago', 'دقائق مضت')}
+                            </span>
+                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${prescription.status === 'In Progress' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                              {prescription.status === 'In Progress' ? 'قيد التجهيز' : 'جديد'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="p-3 bg-slate-50 text-center">
+                      <button className="text-[11px] font-bold text-blue-600 hover:underline">عرض جميع الوصفات</button>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="w-px h-8 bg-slate-200"></div>
               <div className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-lg transition-colors cursor-pointer">

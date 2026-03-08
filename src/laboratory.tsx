@@ -23,6 +23,18 @@ function Laboratory() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [labNotifications] = useState([
+    { id: 1, doctor: 'د. خالد العتيبي', patient: 'سالم علي الشهري', test: 'صورة دم كاملة (CBC)', time: 'منذ 5 دقائق' },
+    { id: 2, doctor: 'د. سارة خليل', patient: 'نورة سعد القحطاني', test: 'وظائف كلى وكبد', time: 'منذ 12 دقيقة' },
+    { id: 3, doctor: 'د. يوسف الأحمد', patient: 'أحمد محمد عبدالله', test: 'تحليل الغدة الدرقية', time: 'منذ 25 دقيقة' },
+  ]);
+
+  const handleSendResults = () => {
+    if (!uploadedFile || !selectedRequest) return;
+    alert(`تم إرسال نتائج فحص ${selectedRequest.test} للمريض ${selectedRequest.patientName} إلى الطبيب المعالج وحفظها في السجل الطبي بنجاح.`);
+    setUploadedFile(null);
+  };
 
   const navigate = useNavigate();
 
@@ -71,7 +83,7 @@ function Laboratory() {
     { id: 'reception', label: 'الاستقبال', icon: ClipboardList },
     { id: 'doctors', label: 'الأطباء', icon: UserCog },
     { id: 'pharmacy', label: 'الصيدلي', icon: Pill },
-    { id: 'laboratory', label: 'المختبر', icon: Microscope, active: true },
+    { id: 'laboratory', label: 'المعامل', icon: Microscope, active: true },
   ];
 
   const managementItems = [
@@ -100,13 +112,15 @@ function Laboratory() {
             <button
               key={item.id}
               onClick={() => {
-                if (item.id === 'patients') navigate('/patient');
+                if (item.id === 'patients') navigate('/patients');
                 if (item.id === 'dash') navigate('/dashboard');
                 if (item.id === 'reception') navigate('/reception');
                 if (item.id === 'pharmacy') navigate('/dispense');
                 if (item.id === 'laboratory') navigate('/laboratory');
+                if (item.id === 'appts') navigate('/appointment');
+                if (item.id === 'doctors') navigate('/dashboard');
               }}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 group ${item.active ? 'bg-[#eef5ff] text-[#2b7de9] shadow-sm' : 'text-gray-400 hover:bg-gray-50 hover:text-[#2b7de9]'}`}
+              className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 group ${item.active ? 'bg-blue-600/10 text-blue-600 shadow-sm' : 'text-gray-400 hover:bg-gray-50 hover:text-blue-600'}`}
             >
               <item.icon className={`w-4 h-4 ${item.active ? '' : 'transition-transform group-hover:scale-110'}`} />
               <span className="font-medium text-xs">{item.label}</span>
@@ -121,6 +135,10 @@ function Laboratory() {
           {managementItems.map((item) => (
             <button
               key={item.id}
+              onClick={() => {
+                if (item.id === 'serv-mgmt') navigate('/services');
+                if (item.id === 'doc-mgmt') navigate('/doctor-management');
+              }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 group text-gray-400 hover:bg-gray-50 hover:text-[#2b7de9]"
             >
               <item.icon className="w-4 h-4 transition-transform group-hover:scale-110" />
@@ -129,7 +147,10 @@ function Laboratory() {
           ))}
 
           {/* System Settings */}
-          <button className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 text-gray-400 hover:bg-gray-50 hover:text-[#2b7de9] mt-2 border-t border-gray-100 pt-2 mb-4">
+          <button
+            onClick={() => navigate('/setting')}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 text-gray-400 hover:bg-gray-50 hover:text-[#2b7de9] mt-2 border-t border-gray-100 pt-2 mb-4"
+          >
             <Settings className="w-4 h-4" />
             <span className="font-medium text-xs">الإعدادات</span>
           </button>
@@ -160,10 +181,59 @@ function Laboratory() {
               <span className="text-[10px] font-bold hidden sm:block">AR</span>
             </button>
 
-            <button className="relative p-1.5 hover:bg-gray-100 rounded-xl transition-colors text-gray-500">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-1.5 hover:bg-gray-100 rounded-xl transition-colors text-gray-500"
+              >
+                <Bell className="w-4 h-4" />
+                <span className="absolute top-1 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+              </button>
+
+              {/* Notifications Popover */}
+              {showNotifications && (
+                <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden text-right" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                      <Microscope className="w-4 h-4 text-blue-600" />
+                      طلبات المختبر الواردة
+                    </h3>
+                    <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full">{labNotifications.length} طلب جديد</span>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {labNotifications.map((note) => (
+                      <div
+                        key={note.id}
+                        className="p-4 border-b border-gray-50 cursor-pointer transition-all hover:bg-slate-50"
+                        onClick={() => {
+                          const newReq = {
+                            id: String(Date.now()),
+                            patientName: note.patient,
+                            labNumber: `LAB-#${Math.floor(1000 + Math.random() * 9000)}`,
+                            test: note.test,
+                            status: 'Waiting' as const,
+                            priority: 'Normal' as const
+                          };
+                          // In a real app we'd add it to the table
+                          setSelectedRequest(newReq);
+                          setShowNotifications(false);
+                        }}
+                      >
+                        <div className="flex items-start justify-between mb-1">
+                          <span className="text-[10px] text-gray-400 font-medium">{note.time}</span>
+                          <p className="font-bold text-gray-800 text-sm">{note.patient}</p>
+                        </div>
+                        <p className="text-xs text-gray-600">{note.test}</p>
+                        <p className="text-[10px] text-blue-600 mt-1 font-bold">بواسطة: {note.doctor}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="p-3 bg-gray-50 text-center">
+                    <button className="text-[11px] font-bold text-blue-600 hover:underline">عرض جميع الطلبات</button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="h-6 w-px bg-gray-200 mx-1 hidden sm:block" />
 
@@ -245,7 +315,11 @@ function Laboratory() {
                   </div>
                 )}
 
-                <button className="w-full mt-3 py-2 text-sm bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5">
+                <button
+                  onClick={handleSendResults}
+                  disabled={!uploadedFile}
+                  className={`w-full mt-3 py-2 text-sm text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-1.5 ${uploadedFile ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'}`}
+                >
                   <span>✓</span> اعتماد ورفع النتائج
                 </button>
               </div>

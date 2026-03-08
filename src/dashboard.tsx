@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   Settings,
   Globe,
-  Bell,
   Search,
   Menu,
   ClipboardList,
@@ -71,6 +70,9 @@ const translations = {
     lateDoctors: 'أطباء متأخرين',
     absentDoctors: 'الأطباء الغائبون',
     hospitalOverview: 'نظرة عامة على المستشفى',
+    hospitalSlogan: 'نظام إدارة مستشفى الشفاء المتكامل في الوقت الفعلي',
+    userName: 'د. سارة خليل',
+    userStatus: 'متاح حالياً',
     addPatient: 'إضافة مريض',
     language: 'English',
     laboratory: 'المعامل'
@@ -81,7 +83,7 @@ const translations = {
     appointments: 'Appointments',
     reception: 'Reception',
     doctors: 'Doctors',
-    pharmacy: 'Pharmacy',
+    pharmacy: 'Pharmacist',
     management: 'Management',
     doctorManagement: 'Doctor Management',
     servicesManagement: 'Services Management',
@@ -114,6 +116,9 @@ const translations = {
     lateDoctors: 'Late Doctors',
     absentDoctors: 'Absent Doctors',
     hospitalOverview: 'Hospital Overiew',
+    hospitalSlogan: 'Integrated Al-Shifa Hospital Management System',
+    userName: 'Dr. Sara Khalil',
+    userStatus: 'Active Now',
     addPatient: 'Add Patient',
     language: 'العربية',
     laboratory: 'Laboratory'
@@ -129,13 +134,13 @@ export default function Dashboard() {
   const t = translations[lang];
 
   const mainMenuItems = [
-    { id: 'dash', label: t.dashboard, icon: LayoutDashboard, active: true },
-    { id: 'patients', label: t.patients, icon: Users },
-    { id: 'appts', label: t.appointments, icon: Calendar },
-    { id: 'reception', label: t.reception, icon: ClipboardList },
-    { id: 'doctors', label: t.doctors, icon: UserCog },
-    { id: 'pharmacy', label: t.pharmacy, icon: Pill },
-    { id: 'laboratory', label: t.laboratory, icon: Microscope },
+    { id: 'dash', label: t.dashboard, icon: LayoutDashboard, active: window.location.pathname === '/dashboard' },
+    { id: 'patients', label: t.patients, icon: Users, active: window.location.pathname === '/patients' },
+    { id: 'appts', label: t.appointments, icon: Calendar, active: window.location.pathname === '/appointment' },
+    { id: 'reception', label: t.reception, icon: ClipboardList, active: window.location.pathname === '/reception' },
+    { id: 'doctors', label: t.doctors, icon: UserCog, active: window.location.pathname === '/doctor' },
+    { id: 'pharmacy', label: t.pharmacy, icon: Pill, active: window.location.pathname === '/dispense' },
+    { id: 'laboratory', label: t.laboratory, icon: Microscope, active: window.location.pathname === '/laboratory' },
   ];
 
   const managementItems = [
@@ -150,9 +155,9 @@ export default function Dashboard() {
   ];
 
   const patientStats = [
-    { label: t.totalPatients, value: '2,845', icon: Users, color: 'primary' },
-    { label: t.waitingPatients, value: '42', icon: Clock, color: 'warning' },
-    { label: t.completedVisits, value: '156', icon: CheckCircle, color: 'success' },
+    { id: 'patients', label: t.totalPatients, value: '2,845', icon: Users, color: 'primary' },
+    { id: 'appts', label: t.waitingPatients, value: '42', icon: Clock, color: 'warning' },
+    { id: 'visits', label: t.completedVisits, value: '156', icon: CheckCircle, color: 'success' },
   ];
 
   const inventoryStats = [
@@ -169,11 +174,19 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className={`min-h-screen bg-bg flex font-['Cairo'] ${isRTL ? 'flex-row' : 'flex-row-reverse'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-bg flex font-['Cairo']" dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/20 z-30 lg:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside className={`fixed lg:relative z-40 h-full w-64 bg-white text-gray-500 transition-all duration-300 transform ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0 shadow-xl overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200`}>
         <div className="p-6 pb-2 flex items-center gap-3">
-          <span className="text-xl font-bold tracking-tight uppercase text-gray-900">Al-Shifa</span>
+          <span className="text-xl font-bold tracking-tight uppercase text-gray-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</span>
         </div>
 
         <nav className="mt-6 px-4 space-y-1">
@@ -181,11 +194,13 @@ export default function Dashboard() {
             <button
               key={item.id}
               onClick={() => {
-                if (item.id === 'patients') navigate('/patient');
+                if (item.id === 'patients') navigate('/patients');
                 if (item.id === 'dash') navigate('/dashboard');
                 if (item.id === 'reception') navigate('/reception');
                 if (item.id === 'pharmacy') navigate('/dispense');
                 if (item.id === 'laboratory') navigate('/laboratory');
+                if (item.id === 'appts') navigate('/appointment');
+                if (item.id === 'doctors') navigate('/dashboard'); // Placeholder
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group ${item.active ? 'bg-primary/10 text-primary shadow-sm' : 'text-gray-400 hover:bg-gray-50 hover:text-primary'}`}
             >
@@ -202,6 +217,12 @@ export default function Dashboard() {
           {managementItems.map((item) => (
             <button
               key={item.id}
+              onClick={() => {
+                if (item.id === 'serv-mgmt') navigate('/services');
+                if (item.id === 'doc-mgmt') navigate('/doctor-management');
+                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                setSidebarOpen(window.innerWidth >= 1024);
+              }}
               className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-gray-400 hover:bg-gray-50 hover:text-primary"
             >
               <item.icon className="w-5 h-5 transition-transform group-hover:scale-110" />
@@ -238,23 +259,15 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 relative">
+          <div className="flex items-center gap-4">
             {/* Language Toggle - Globe Icon */}
             <button
               onClick={() => setLang(l => l === 'ar' ? 'en' : 'ar')}
-              className="p-2.5 text-gray-500 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border border-transparent hover:border-gray-200"
+              className="p-3 bg-slate-50 text-slate-500 hover:text-primary rounded-2xl transition-all border border-slate-100 flex items-center gap-2 group active:scale-95"
               title={t.language}
             >
-              <Globe className="w-5 h-5 text-primary" />
-              <span className="text-xs font-bold hidden sm:block">{lang === 'ar' ? 'EN' : 'AR'}</span>
-            </button>
-
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className={`relative p-2.5 hover:bg-gray-100 rounded-xl transition-colors ${showNotifications ? 'bg-primary/5 text-primary' : 'text-gray-500'}`}
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full border-2 border-white"></span>
+              <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              <span className="text-xs font-black uppercase tracking-widest">{lang === 'ar' ? 'English' : 'العربية'}</span>
             </button>
 
             {/* Notifications Dropdown */}
@@ -293,8 +306,8 @@ export default function Dashboard() {
             <div className={`h-10 w-px bg-gray-100 mx-2`}></div>
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-gray-900">د. سارة خليل</p>
-                <p className="text-xs text-success font-medium">متاح حالياً</p>
+                <p className="text-sm font-bold text-gray-900">{t.userName}</p>
+                <p className="text-xs text-success font-medium">{t.userStatus}</p>
               </div>
               <div className="w-10 h-10 bg-gradient-to-tr from-primary to-blue-800 rounded-xl flex items-center justify-center text-white shadow-lg overflow-hidden border-2 border-white">
                 <img src={`https://ui-avatars.com/api/?name=Sara+Khalail&background=1a4fa0&color=fff`} alt="User avatar" />
@@ -309,7 +322,7 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">{t.hospitalOverview}</h2>
-              <p className="text-gray-500 text-sm mt-1">نظام إدارة مستشفى الشفاء المتكامل في الوقت الفعلي</p>
+              <p className="text-gray-500 text-sm mt-1">{t.hospitalSlogan}</p>
             </div>
           </div>
 
@@ -318,7 +331,10 @@ export default function Dashboard() {
             {patientStats.map((stat, idx) => (
               <div
                 key={idx}
-                onClick={() => navigate('/patient')}
+                onClick={() => {
+                  if (stat.id === 'patients') navigate('/patients');
+                  if (stat.id === 'appts') navigate('/appointment');
+                }}
                 className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group relative overflow-hidden cursor-pointer"
               >
                 <div className="flex items-center justify-between">
