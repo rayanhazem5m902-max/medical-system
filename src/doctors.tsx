@@ -4,8 +4,8 @@ import {
     Calendar, LayoutDashboard, Microscope, Pill,
     ClipboardList, UsersRound, Contact2, Briefcase, Warehouse,
     Layers, Wallet, FileText, Coins, Settings, Search,
-    Menu, Globe, Shield,
-    Activity, Bell, LogOut, X, UserPlus, User
+    Menu, Globe, Shield, AlertTriangle, Wand2,
+    Activity, Bell, LogOut, Users, Printer, Save, X
 } from 'lucide-react';
 import { cn } from './utils/cn';
 
@@ -31,32 +31,7 @@ const translations = {
         financialReports: 'التقارير المالية',
         payrollManagement: 'إدارة الرواتب',
         settings: 'الإعدادات',
-        addDoctor: 'إضافة طبيب جديد',
-        editDoctor: 'تعديل بيانات طبيب',
-        searchPlaceholder: 'بحث باسم الطبيب أو التخصص...',
-        personalInfo: 'المعلومات الشخصية',
-        professionalData: 'البيانات المهنية',
-        weeklySchedule: 'الجدول الزمني الأسبوعي',
-        doctorName: 'اسم الطبيب الكامل',
-        specialty: 'التخصص الطبي',
-        department: 'القسم',
-        phone: 'رقم الجوال',
-        email: 'البريد الإلكتروني',
-        licenseNumber: 'رقم ترخيص المزاولة',
-        status: 'الحالة',
-        active: 'نشط',
-        inactive: 'غير نشط',
-        uploadPhoto: 'رفع صورة الطبيب',
-        dragDrop: 'اسحب وأفلت الصورة هنا أو انقر للاختيار',
-        save: 'حفظ البيانات',
-        cancel: 'إلغاء',
-        conflictWarning: 'تنبيه: يوجد تضارب في المواعيد مع د. ليلى حسن',
-        solveConflict: 'حل التضارب تلقائياً',
-        back: 'رجوع',
-        actions: 'الإجراءات',
-        licensePlaceholder: 'MOH-XXXXX-X',
-        phonePlaceholder: '05XXXXXXXX',
-        todaySchedule: 'جدول مواعيد اليوم',
+        todaySchedule: 'جدول مواعيد اليوم (العيادات اليومية)',
         emergency: 'حالة طارئة',
         followUp: 'مراجعة',
         consultation: 'استشارة',
@@ -81,7 +56,8 @@ const translations = {
         printReport: 'طباعة التقرير',
         saveReport: 'حفظ التقرير',
         medicalRecord: 'السجل الطبي',
-        close: 'إغلاق'
+        close: 'إغلاق',
+        searchPlaceholder: 'بحث عن مريض في الجدول...',
     },
     en: {
         hospitalName: 'Al-Shifa Hospital',
@@ -102,31 +78,7 @@ const translations = {
         financialReports: 'Financial Reports',
         payrollManagement: 'Payroll Management',
         settings: 'Settings',
-        addDoctor: 'Add New Doctor',
-        editDoctor: 'Edit Doctor Details',
-        searchPlaceholder: 'Search by name or specialty...',
-        personalInfo: 'Personal Information',
-        professionalData: 'Professional Data',
-        weeklySchedule: 'Weekly Schedule',
-        doctorName: 'Full Doctor Name',
-        specialty: 'Medical Specialty',
-        department: 'Department',
-        phone: 'Phone Number',
-        email: 'Email Address',
-        licenseNumber: 'Medical License Number',
-        status: 'Status',
-        active: 'Active',
-        inactive: 'Inactive',
-        uploadPhoto: 'Upload Profile Photo',
-        dragDrop: 'Drag and drop or click to upload',
-        save: 'Save Changes',
-        cancel: 'Cancel',
-        conflictWarning: 'Warning: Schedule conflict with Dr. Laila Hassan',
-        solveConflict: 'Solve Conflicts Automatically',
-        actions: 'Actions',
-        licensePlaceholder: 'MOH-XXXXX-X',
-        phonePlaceholder: '05XXXXXXXX',
-        todaySchedule: "Today's Schedule",
+        todaySchedule: "Today's Clinic Schedule",
         patientDetails: 'Patient Details & Medical Record',
         medicalHistory: 'Medical History & Diagnosis',
         currentStatus: 'Current Health Status',
@@ -152,7 +104,8 @@ const translations = {
         printReport: 'Print Report',
         saveReport: 'Save Report',
         medicalRecord: 'Medical Record',
-        close: 'Close'
+        close: 'Close',
+        searchPlaceholder: 'Search patients in schedule...',
     }
 };
 
@@ -168,17 +121,15 @@ const PRINT_STYLES = `
 }
 `;
 
-export default function DoctorManagement() {
+export default function Doctors() {
     const [lang, setLang] = useState<Lang>('ar');
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [selectedPatientId, setSelectedPatientId] = useState<number | null>(1);
+    const [patientStatus, setPatientStatus] = useState('');
+    const [prescription, setPrescription] = useState('');
     const [showNotifications, setShowNotifications] = useState(false);
-    const [showAddDoctor, setShowAddDoctor] = useState(false);
-    const [doctors, setDoctors] = useState([
-        { id: 1, name: 'د. خالد العتيبي', code: 'DOC-101', specialty: 'جراحة القلب', dept: 'قسم القلب', status: 'active', patientsToday: 4 },
-        { id: 2, name: 'د. ليلى حسن', code: 'DOC-102', specialty: 'طب الأطفال', dept: 'قسم الأطفال', status: 'active', patientsToday: 6 },
-        { id: 3, name: 'د. محمد الراشد', code: 'DOC-103', specialty: 'جراحة العظام', dept: 'قسم العظام', status: 'vacation', patientsToday: 0 },
-        { id: 4, name: 'د. سارة المنصور', code: 'DOC-104', specialty: 'طب الطوارئ', dept: 'قسم الطوارئ', status: 'active', patientsToday: 12 },
-    ]);
+    const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+    const [historyPatientId, setHistoryPatientId] = useState<number | null>(null);
 
     const navigate = useNavigate();
     const isRTL = lang === 'ar';
@@ -191,27 +142,20 @@ export default function DoctorManagement() {
         { id: 4, name: 'نورة السعدون', time: '11:00 AM', type: t.emergency, age: '52', gender: isRTL ? 'أنثى' : 'Female', blood: 'AB+', history: isRTL ? 'سكري من النوع الثاني. فحص دوري طارئ.' : 'Type 2 diabetes. Emergency routine check.' },
     ];
 
-    const [doctors, setDoctors] = useState([
-        { id: 1, name: 'د. خالد العتيبي', code: 'DOC-101', specialty: 'جراحة القلب', dept: 'قسم القلب', status: 'active', patientsToday: 4 },
-        { id: 2, name: 'د. ليلى حسن', code: 'DOC-102', specialty: 'طب الأطفال', dept: 'قسم الأطفال', status: 'active', patientsToday: 6 },
-        { id: 3, name: 'د. محمد الراشد', code: 'DOC-103', specialty: 'جراحة العظام', dept: 'قسم العظام', status: 'vacation', patientsToday: 0 },
-        { id: 4, name: 'د. سارة المنصور', code: 'DOC-104', specialty: 'طب الطوارئ', dept: 'قسم الطوارئ', status: 'active', patientsToday: 12 },
-    ]);
-
     const selectedPatient = patientAppointments.find(p => p.id === selectedPatientId);
 
-    const mainMenuItems: { id: string, label: string, icon: any, active?: boolean }[] = [
+    const mainMenuItems = [
         { id: 'dash', label: t.dashboard, icon: LayoutDashboard },
         { id: 'patients', label: t.patients, icon: FileText },
         { id: 'appts', label: t.appointments, icon: Calendar },
         { id: 'reception', label: t.reception, icon: ClipboardList },
-        { id: 'doctors', label: t.doctors, icon: Activity },
+        { id: 'doctors', label: t.doctors, icon: Activity, active: true },
         { id: 'pharmacy', label: t.pharmacy, icon: Pill },
         { id: 'laboratory', label: t.laboratory, icon: Microscope },
     ];
 
-    const managementItems: { id: string, label: string, icon: any, active?: boolean }[] = [
-        { id: 'doc-mgmt', label: t.doctorManagement, icon: UsersRound, active: true },
+    const managementItems = [
+        { id: 'doc-mgmt', label: t.doctorManagement, icon: UsersRound },
         { id: 'emp-mgmt', label: t.employeeManagement, icon: Contact2 },
         { id: 'serv-mgmt', label: t.servicesManagement, icon: Briefcase },
         { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse },
@@ -321,12 +265,12 @@ export default function DoctorManagement() {
 
                 <div className="p-4 border-t border-slate-100 mx-2 pb-8 bg-slate-50/50 rounded-b-[40px]">
                     <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-200 shadow-sm">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-700 flex items-center justify-center text-white font-black text-xs">
-                            AD
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-700 flex items-center justify-center text-white font-black text-xs">
+                            DR
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-black text-slate-900 truncate">{isRTL ? 'المدير النظام' : 'System Admin'}</p>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase">{isRTL ? 'إدارة الأطباء' : 'Doctor Mgmt'}</p>
+                            <p className="text-xs font-black text-slate-900 truncate">{isRTL ? 'د. خالد العتيبي' : 'Dr. Khaled Otaibi'}</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase">{isRTL ? 'العيادات اليومية' : 'Clinic Daily'}</p>
                         </div>
                         <button
                             onClick={() => navigate('/')}
@@ -378,99 +322,178 @@ export default function DoctorManagement() {
                             )}
                         </button>
                         <button
-                            onClick={() => setShowAddDoctor(true)}
-                            className="p-3 bg-blue-600 text-white hover:bg-blue-700 rounded-2xl transition-all border border-blue-100 flex items-center gap-2 group active:scale-95 shadow-lg shadow-blue-200"
-                        >
-                            <UsersRound className="w-5 h-5" />
-                            <span className="text-xs font-black uppercase tracking-widest">{t.addDoctor}</span>
-                        </button>
-                        <button
                             onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
                             className="p-3 bg-slate-50 text-slate-500 hover:text-blue-600 rounded-2xl transition-all border border-slate-100 flex items-center gap-2 group active:scale-95"
                         >
                             <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                             <span className="text-xs font-black uppercase tracking-widest">{lang === 'ar' ? 'English' : 'العربية'}</span>
                         </button>
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold border border-blue-200 shadow-sm">AD</div>
+                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold border border-blue-200 shadow-sm">K.O</div>
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar no-scrollbar">
-                    <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4 leading-none">
-                                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black">
-                                    {doctors.length}
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'إجمالي الأطباء' : 'Total Doctors'}</p>
-                                    <p className="text-lg font-black text-slate-900">{isRTL ? 'طبيباً' : 'Doctors'} {doctors.length}</p>
-                                </div>
+                <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar no-scrollbar text-right">
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 h-full">
+                        <div className="xl:col-span-4 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-black text-slate-900 tracking-tight">{t.todaySchedule}</h2>
+                                <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{patientAppointments.length} مرضى</span>
                             </div>
-                            <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4 leading-none">
-                                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-black">
-                                    {doctors.filter(d => d.status === 'active').length}
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'في الخدمة' : 'On Duty'}</p>
-                                    <p className="text-lg font-black text-slate-900">{doctors.filter(d => d.status === 'active').length}</p>
-                                </div>
+                            <div className="space-y-4">
+                                {patientAppointments.map((appt) => (
+                                    <button
+                                        key={appt.id}
+                                        onClick={() => setSelectedPatientId(appt.id)}
+                                        className={cn(
+                                            "w-full text-right p-5 rounded-[28px] border transition-all duration-300 group",
+                                            selectedPatientId === appt.id
+                                                ? "bg-white border-blue-600 shadow-xl shadow-blue-100 ring-4 ring-blue-50"
+                                                : "bg-white border-slate-100 hover:border-blue-200 hover:shadow-lg shadow-sm"
+                                        )}
+                                    >
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={cn(
+                                                        "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg transition-colors shadow-sm",
+                                                        selectedPatientId === appt.id ? "bg-blue-600 text-white shadow-blue-200" : "bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600"
+                                                    )}>
+                                                        {appt.name[0]}
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="font-black text-slate-900 text-base leading-none mb-1">{appt.name}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{appt.type}</p>
+                                                            <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setHistoryPatientId(appt.id);
+                                                                    setShowHistoryDialog(true);
+                                                                }}
+                                                                className="text-[10px] font-black text-blue-600 hover:text-blue-800 underline decoration-blue-600/30 underline-offset-4 transition-colors"
+                                                            >
+                                                                {t.medicalRecord}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="text-[10px] font-black text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-lg uppercase border border-blue-100/50 shadow-sm">{appt.time}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
                             </div>
-                            <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4 leading-none">
-                                <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center font-black">
-                                    {doctors.filter(d => d.status === 'vacation').length}
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'في إجازة' : 'On Vacation'}</p>
-                                    <p className="text-lg font-black text-slate-900">{doctors.filter(d => d.status === 'vacation').length}</p>
-                                </div>
-                            </div>
-                            <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4 leading-none">
-                                <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black">
-                                    {doctors.reduce((acc, d) => acc + d.patientsToday, 0)}
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'مواعيد اليوم' : 'Total Patients'}</p>
-                                    <p className="text-lg font-black text-slate-900">{doctors.reduce((acc, d) => acc + d.patientsToday, 0)}</p>
-                                </div>
+
+                            <div className="pt-6 border-t border-slate-200 grid grid-cols-2 gap-4">
+                                <button className="flex flex-col items-center justify-center p-4 bg-emerald-50 border border-emerald-100 rounded-3xl group hover:bg-emerald-600 hover:border-emerald-600 transition-all duration-300 active:scale-95">
+                                    <Calendar className="w-6 h-6 text-emerald-600 mb-2 group-hover:text-white transition-colors" />
+                                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest group-hover:text-white transition-colors">{t.vacationRequest}</span>
+                                </button>
+                                <button className="flex flex-col items-center justify-center p-4 bg-rose-50 border border-rose-100 rounded-3xl group hover:bg-rose-600 hover:border-rose-600 transition-all duration-300 active:scale-95">
+                                    <AlertTriangle className="w-6 h-6 text-rose-600 mb-2 group-hover:text-white transition-colors" />
+                                    <span className="text-[10px] font-black text-rose-700 uppercase tracking-widest group-hover:text-white transition-colors">{t.cancelAppointment}</span>
+                                </button>
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {doctors.map(doc => (
-                                <div key={doc.id} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all group overflow-hidden relative">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/50 rounded-bl-[60px] -mr-8 -mt-8 group-hover:bg-blue-600/10 transition-colors" />
-                                    <div className="flex items-center gap-4 mb-6 relative">
-                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center text-blue-600 font-black text-xl shadow-inner group-hover:from-blue-600 group-hover:to-blue-700 group-hover:text-white transition-all duration-500">
-                                            {doc.name[doc.name.indexOf('.') + 2]}
+
+                        <div className="xl:col-span-8 flex flex-col gap-8">
+                            {selectedPatient ? (
+                                <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl overflow-hidden flex flex-col h-full animate-in zoom-in duration-500">
+                                    <div className="p-8 bg-gradient-to-br from-slate-900 to-blue-900 text-white flex items-center justify-between">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-20 h-20 rounded-[28px] bg-white/10 backdrop-blur-md flex items-center justify-center text-3xl font-black">
+                                                {selectedPatient.name[0]}
+                                            </div>
+                                            <div className="text-right">
+                                                <h2 className="text-2xl font-black tracking-tight">{selectedPatient.name}</h2>
+                                                <div className="flex items-center gap-4 mt-2 opacity-80 justify-end">
+                                                    <span className="text-xs font-bold px-2 py-1 bg-white/10 rounded-lg">{isRTL ? 'العمر' : 'Age'}: {selectedPatient.age}</span>
+                                                    <span className="text-xs font-bold px-2 py-1 bg-white/10 rounded-lg">{isRTL ? 'الجنس' : 'Sex'}: {selectedPatient.gender}</span>
+                                                    <span className="text-xs font-bold px-2 py-1 bg-white/10 rounded-lg text-rose-300">{isRTL ? 'فصيلة' : 'Blood'}: {selectedPatient.blood}</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <h3 className="font-black text-slate-900 group-hover:text-blue-600 transition-colors">{doc.name}</h3>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{doc.specialty}</p>
+                                        <div className="flex items-center gap-3 no-print">
+                                            <button
+                                                onClick={handleSaveAll}
+                                                className="p-4 bg-white/10 hover:bg-emerald-500/40 rounded-2xl transition-all group flex items-center gap-2"
+                                                title={t.saveReport}
+                                            >
+                                                <Save className="w-5 h-5" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">{t.saveReport}</span>
+                                            </button>
+                                            <button
+                                                onClick={() => window.print()}
+                                                className="p-4 bg-white/10 hover:bg-blue-500/40 rounded-2xl transition-all group flex items-center gap-2"
+                                                title={t.printReport}
+                                            >
+                                                <Printer className="w-5 h-5" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">{t.printReport}</span>
+                                            </button>
+                                            <button className="p-4 bg-white/10 hover:bg-white/20 rounded-2xl transition-all">
+                                                <FileText className="w-6 h-6" />
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="space-y-3 relative">
-                                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl group-hover:bg-white transition-colors">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase">{isRTL ? 'كود الموظف' : 'Staff ID'}</span>
-                                            <span className="text-xs font-bold text-slate-700">{doc.code}</span>
+
+                                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                                        <div className="space-y-6">
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                    <Shield className="w-4 h-4 text-blue-600" />
+                                                    <h3 className="text-xs font-black uppercase tracking-widest">{t.medicalHistory}</h3>
+                                                </div>
+                                                <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100 text-sm font-bold text-slate-600 leading-relaxed italic text-right">
+                                                    "{selectedPatient.history}"
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                    <Activity className="w-4 h-4 text-emerald-600" />
+                                                    <h3 className="text-xs font-black uppercase tracking-widest">{t.currentStatus}</h3>
+                                                </div>
+                                                <textarea
+                                                    value={patientStatus}
+                                                    onChange={(e) => setPatientStatus(e.target.value)}
+                                                    placeholder={t.notesPlaceholder}
+                                                    className="w-full h-32 p-5 bg-slate-50 border border-slate-200 rounded-[32px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all resize-none text-right"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl group-hover:bg-white transition-colors">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase">{isRTL ? 'الحالة' : 'Status'}</span>
-                                            <span className={cn(
-                                                "px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
-                                                doc.status === 'active' ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"
-                                            )}>
-                                                {doc.status === 'active' ? (isRTL ? 'في الخدمة' : 'Active') : (isRTL ? 'في إجازة' : 'On Leave')}
-                                            </span>
+
+                                        <div className="space-y-6 flex flex-col text-right">
+                                            <div className="space-y-3 flex-1">
+                                                <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                    <Pill className="w-4 h-4 text-indigo-600" />
+                                                    <h3 className="text-xs font-black uppercase tracking-widest">{t.prescribeMedicine}</h3>
+                                                </div>
+                                                <textarea
+                                                    value={prescription}
+                                                    onChange={(e) => setPrescription(e.target.value)}
+                                                    placeholder={t.medicationPlaceholder}
+                                                    className="w-full h-full min-h-[150px] p-5 bg-indigo-50/30 border border-indigo-100 rounded-[32px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-indigo-50 outline-none transition-all resize-none text-right"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={handleSaveAll}
+                                                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-95 no-print"
+                                            >
+                                                <Wand2 className="w-5 h-5" />
+                                                <span>{t.savePrescription}</span>
+                                            </button>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => navigate('/doctors')}
-                                        className="w-full mt-6 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95 shadow-lg shadow-slate-200"
-                                    >
-                                        {isRTL ? 'عرض الجدول والمواعيد' : 'View Schedule & Patients'}
-                                    </button>
                                 </div>
-                            ))}
+                            ) : (
+                                <div className="flex-1 bg-white rounded-[40px] border border-slate-100 flex flex-col items-center justify-center text-slate-300">
+                                    <Users className="w-16 h-16 mb-4" />
+                                    <p className="font-black uppercase tracking-widest">{t.searchPlaceholder}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </main>
@@ -518,7 +541,7 @@ export default function DoctorManagement() {
                                     <Shield className="w-4 h-4 text-blue-600" />
                                     {t.medicalHistory}
                                 </h4>
-                                <div className="p-6 bg-blue-50/50 border border-blue-100 rounded-[32px] text-sm font-bold text-slate-700 leading-relaxed italic">
+                                <div className="p-6 bg-blue-50/50 border border-blue-100 rounded-[32px] text-sm font-bold text-slate-700 leading-relaxed italic text-right">
                                     "{patientAppointments.find(p => p.id === historyPatientId)?.history}"
                                 </div>
                             </div>
@@ -528,96 +551,6 @@ export default function DoctorManagement() {
                             >
                                 {t.close}
                             </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {/* Add Doctor Modal */}
-            {showAddDoctor && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-4xl rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in duration-300">
-                        <div className="p-8 bg-blue-600 text-white flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
-                                    <UserPlus className="w-6 h-6" />
-                                </div>
-                                <div className="text-right">
-                                    <h3 className="text-xl font-black">{t.addDoctor}</h3>
-                                    <p className="text-xs text-blue-100 font-bold uppercase tracking-widest opacity-80">{isRTL ? 'إضافة كادر طبي جديد للنظام' : 'Add new medical staff to systems'}</p>
-                                </div>
-                            </div>
-                            <button onClick={() => setShowAddDoctor(false)} className="p-3 hover:bg-white/10 rounded-2xl transition-all">
-                                <X className="w-6 h-6" />
-                            </button>
-                        </div>
-                        <div className="p-10 grid grid-cols-2 gap-8 bg-slate-50/50">
-                            <div className="space-y-6">
-                                <div className="space-y-2 text-right">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">{t.doctorName}</label>
-                                    <div className="relative group">
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                                            <User size={18} />
-                                        </div>
-                                        <input type="text" className="w-full pr-12 pl-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-right">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">{t.specialty}</label>
-                                    <div className="relative group">
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                                            <Briefcase size={18} />
-                                        </div>
-                                        <input type="text" className="w-full pr-12 pl-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-right">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">{t.licenseNumber}</label>
-                                    <div className="relative group">
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                                            <Shield size={18} />
-                                        </div>
-                                        <input type="text" placeholder={t.licensePlaceholder} className="w-full pr-12 pl-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-6">
-                                <div className="space-y-2 text-right">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">{isRTL ? 'رقم الموظف' : 'Employee ID'}</label>
-                                    <div className="relative group">
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                                            <Coins size={18} />
-                                        </div>
-                                        <input type="text" className="w-full pr-12 pl-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-right">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">{t.phone}</label>
-                                    <div className="relative group">
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                                            <Phone size={18} />
-                                        </div>
-                                        <input type="text" placeholder={t.phonePlaceholder} className="w-full pr-12 pl-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-right">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">{isRTL ? 'القسم والعيادة' : 'Dept & Clinic'}</label>
-                                    <div className="relative group">
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                                            <Layers size={18} />
-                                        </div>
-                                        <select className="w-full pr-12 pl-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all appearance-none cursor-pointer">
-                                            <option>{isRTL ? 'قسم القلب' : 'Cardiology'}</option>
-                                            <option>{isRTL ? 'قسم الأطفال' : 'Pediatrics'}</option>
-                                            <option>{isRTL ? 'قسم الطوارئ' : 'Emergency'}</option>
-                                            <option>{isRTL ? 'قسم العظام' : 'Orthopedics'}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-8 border-t border-slate-100 bg-white flex items-center justify-end gap-4">
-                            <button onClick={() => setShowAddDoctor(false)} className="px-8 py-3.5 bg-slate-100 text-slate-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">{t.cancel}</button>
-                            <button onClick={() => setShowAddDoctor(false)} className="px-10 py-3.5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all active:scale-95">{t.save}</button>
                         </div>
                     </div>
                 </div>

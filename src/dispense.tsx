@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Circle, User, FileText, Pill, DollarSign, Clock, LogOut, Package, AlertCircle, Bell, LayoutDashboard, Users, Calendar, ClipboardList, UserCog, Microscope, UsersRound, Contact2, Briefcase, Warehouse, Layers, Wallet, Coins, Settings } from 'lucide-react';
+import { CheckCircle2, Circle, User, FileText, Pill, DollarSign, Clock, LogOut, Package, AlertCircle, Bell, LayoutDashboard, Users, Calendar, ClipboardList, UserCog, Microscope, UsersRound, Contact2, Briefcase, Warehouse, Layers, Wallet, Coins, Settings, Activity, Banknote } from 'lucide-react';
+import { cn } from './utils/cn';
 
 interface Medication {
   id: number;
@@ -69,12 +70,24 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 flex font-['Cairo']" dir="rtl">
       {/* Primary Sidebar - Main Navigation */}
-      <aside className={`fixed lg:relative z-40 h-full w-64 bg-white text-gray-500 transition-all duration-300 transform shadow-xl overflow-y-auto overflow-x-hidden border-l border-slate-200`}>
-        <div className="p-4 flex items-center gap-3 border-b border-slate-100">
-          <span className="text-lg font-black tracking-tight uppercase text-gray-900">Al-Shifa</span>
+      <aside className={cn(
+        "fixed inset-y-0 z-50 w-72 bg-white flex flex-col shadow-2xl transition-transform duration-300 transform lg:relative lg:translate-x-0 border-l border-slate-100"
+      )}>
+        <div className="p-8 pb-4">
+          <div className="flex items-center gap-4 group">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+              <Activity className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-black tracking-tight text-slate-900">مستشفى الشفاء</h1>
+              <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+            </div>
+          </div>
         </div>
 
-        <nav className="mt-4 px-3 space-y-1">
+        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
+          {/* Main Menu */}
+          <p className="px-5 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 mt-4">القائمة الرئيسية</p>
           {sidebarItems.map((item) => (
             <button
               key={item.id}
@@ -85,18 +98,20 @@ export default function App() {
                 if (item.id === 'pharmacy') navigate('/dispense');
                 if (item.id === 'laboratory') navigate('/laboratory');
                 if (item.id === 'appts') navigate('/appointment');
-                if (item.id === 'doctors') navigate('/dashboard');
+                if (item.id === 'doctors') navigate('/doctor-management');
               }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group ${item.active ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'}`}
+              className={cn(
+                "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
+                item.id === 'pharmacy' ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+              )}
             >
-              <item.icon className={`w-4 h-4 ${item.active ? '' : 'transition-transform group-hover:scale-110'}`} />
-              <span className="font-bold text-xs">{item.label}</span>
+              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'pharmacy' ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+              <span>{item.label}</span>
             </button>
           ))}
 
-          {/* Management Section */}
-          <div className="pt-4 pb-2 px-4">
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">الإدارة</h4>
+          <div className="pt-4 pb-2 px-6">
+            <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">الإدارة</h4>
           </div>
 
           {managementItems.map((item) => (
@@ -105,23 +120,51 @@ export default function App() {
               onClick={() => {
                 if (item.id === 'serv-mgmt') navigate('/services');
                 if (item.id === 'doc-mgmt') navigate('/doctor-management');
+                if (item.id === 'emp-mgmt') navigate('/employee');
+                if (item.id === 'dept-mgmt') navigate('/department');
+                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                if (item.id === 'fin-mgmt') navigate('/payroll');
+                if (item.id === 'fin-reports') navigate('/reports');
+                if (item.id === 'payroll-mgmt') navigate('/salary-management');
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+              className={cn(
+                "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
+                "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+              )}
             >
-              <item.icon className="w-4 h-4 transition-transform group-hover:scale-110" />
-              <span className="font-bold text-xs">{item.label}</span>
+              <item.icon className="w-5 h-5 transition-transform group-hover:scale-110 text-slate-400 group-hover:text-blue-600" />
+              <span>{item.label}</span>
             </button>
           ))}
+        </nav>
 
-          {/* System Settings */}
+        <div className="p-4 border-t border-slate-100 mx-2 mb-2">
           <button
             onClick={() => navigate('/setting')}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 mt-2 border-t border-slate-100 pt-2 mb-4"
+            className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-blue-600"
           >
-            <Settings className="w-4 h-4" />
-            <span className="font-bold text-xs">الإعدادات</span>
+            <Settings className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
+            <span className="text-sm font-bold">الإعدادات</span>
           </button>
-        </nav>
+        </div>
+
+        <div className="p-4 border-t border-slate-100 mx-2 pb-8 bg-slate-50/50 rounded-b-[40px]">
+          <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-700 flex items-center justify-center text-white font-black text-xs">
+              AD
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black text-slate-900 truncate">أحمد العلي</p>
+              <p className="text-[9px] font-bold text-slate-400 uppercase">الصيدلي المسؤول</p>
+            </div>
+            <button
+              onClick={() => navigate('/')}
+              className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </aside>
 
 

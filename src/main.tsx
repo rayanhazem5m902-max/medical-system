@@ -9,6 +9,10 @@ import Setting from "./setting";
 import Dashboard from "./dashboard";
 import Patient from "./patient";
 import Patients from "./patients";
+import Employee from "./employee";
+import Department from "./department";
+import Payroll from "./payroll";
+import SalaryManagement from "./salary_management";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dispense from "./dispense";
@@ -17,6 +21,7 @@ import Reception from "./reception";
 import Appointment from "./appointment";
 import Services from "./services";
 import DoctorManagement from "./doctor_management";
+import Doctors from "./doctors";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -32,7 +37,12 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/appointment" element={<Appointment />} />
         <Route path="/reception" element={<Reception />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/doctors" element={<Doctors />} />
         <Route path="/doctor-management" element={<DoctorManagement />} />
+        <Route path="/employee" element={<Employee />} />
+        <Route path="/department" element={<Department />} />
+        <Route path="/payroll" element={<Payroll />} />
+        <Route path="/salary-management" element={<SalaryManagement />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

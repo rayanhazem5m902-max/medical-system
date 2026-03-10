@@ -1,44 +1,54 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  LayoutDashboard,
+  Users,
+  CalendarDays,
+  UserPlus,
+  Settings,
+  LogOut,
+  Search,
+  Bell,
+  ChevronLeft,
+  Calendar,
+  Save,
+  X,
+  Info,
+  ShieldCheck,
+  HelpCircle,
+  Heart,
+  Menu,
+  ChevronDown,
+  Building2,
+  Briefcase,
+  Mail,
+  Phone,
+  CreditCard,
+  User,
+  Activity,
   Plus,
   Filter,
   CheckCircle2,
   AlertCircle,
-  X,
   MoreVertical,
-  CalendarDays,
   Clock,
   MapPin,
   Trash2,
   Edit2,
-  ChevronDown,
-  User,
-  Phone,
-  Mail,
-  ArrowRight,
   MessageSquare,
-  Activity,
+  Globe,
+  Printer,
   UserCog,
   Pill,
   Microscope,
   UsersRound,
   Contact2,
-  Briefcase,
   Warehouse,
   Layers,
   Wallet,
   FileText,
   Coins,
-  Settings,
-  Globe,
-  Search,
-  Menu,
-  LayoutDashboard,
-  Calendar,
-  Users,
   ClipboardList,
-  Printer,
 } from 'lucide-react';
 
 const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
@@ -318,68 +328,99 @@ export default function AppointmentPage() {
 
       {/* ── Sidebar ── */}
       <aside className={cn(
-        "fixed inset-y-0 z-50 w-64 bg-white transition-all duration-300 transform lg:relative lg:translate-x-0 shadow-xl flex flex-col overflow-y-auto no-scrollbar",
+        "fixed inset-y-0 z-50 w-72 bg-white flex flex-col shadow-2xl transition-transform duration-300 transform lg:relative lg:translate-x-0 border-l border-slate-100",
         sidebarOpen ? "translate-x-0" : (isRTL ? "translate-x-full" : "-translate-x-full")
       )}>
-        <div className="p-6 pb-2 flex items-center gap-3">
-          <span className="text-xl font-bold tracking-tight uppercase text-gray-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</span>
+        <div className="p-8 pb-4">
+          <div className="flex items-center gap-4 group">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+              <Activity className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-black tracking-tight text-slate-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</h1>
+              <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-6 px-4 space-y-1 flex-1">
-          <nav className="space-y-1">
-            <p className="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">{isRTL ? 'القائمة الرئيسية' : 'Main Menu'}</p>
-            {mainMenuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (item.id === 'reception') navigate('/reception');
-                  if (item.id === 'dash') navigate('/dashboard');
-                  if (item.id === 'patients') navigate('/patients');
-                  if (item.id === 'pharmacy') navigate('/dispense');
-                  if (item.id === 'laboratory') navigate('/laboratory');
-                }}
-                className={cn(
-                  "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative",
-                  item.active
-                    ? "bg-blue-600/10 text-blue-600 shadow-sm"
-                    : "text-gray-400 hover:bg-gray-50 hover:text-blue-600"
-                )}
-              >
-                <item.icon className={cn("w-5 h-5", item.active ? "text-blue-600" : "transition-transform group-hover:scale-110")} />
-                <span className="font-medium text-sm">{item.label}</span>
-                {item.id === 'appts' && <span className="absolute right-4 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />}
-              </button>
-            ))}
-          </nav>
+        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
+          {/* Main Menu */}
+          <p className="px-5 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 mt-4">{isRTL ? 'القائمة الرئيسية' : 'Main Menu'}</p>
+          {mainMenuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.id === 'reception') navigate('/reception');
+                if (item.id === 'dash') navigate('/dashboard');
+                if (item.id === 'patients') navigate('/patients');
+                if (item.id === 'pharmacy') navigate('/dispense');
+                if (item.id === 'laboratory') navigate('/laboratory');
+              }}
+              className={cn(
+                "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group relative",
+                item.id === 'appts' ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+              )}
+            >
+              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'appts' ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+              <span className="font-bold text-sm">{item.label}</span>
+              {item.id === 'appts' && <span className="absolute right-4 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />}
+            </button>
+          ))}
 
-          <nav className="space-y-1 pt-4">
-            <p className="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">{t.management}</p>
-            {managementItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (item.id === 'serv-mgmt') navigate('/services');
-                  if (item.id === 'doc-mgmt') navigate('/doctor-management');
-                }}
-                className={cn(
-                  "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-gray-400 hover:bg-gray-50 hover:text-blue-600"
-                )}
-              >
-                <item.icon className="w-4 h-4 transition-transform group-hover:scale-110" />
-                <span className="font-medium text-sm">{item.label}</span>
-              </button>
-            ))}
-          </nav>
-        </div>
+          <div className="pt-4 pb-2 px-6">
+            <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.management}</h4>
+          </div>
 
-        <div className="p-4 border-t border-gray-100">
+          {managementItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.id === 'serv-mgmt') navigate('/services');
+                if (item.id === 'doc-mgmt') navigate('/doctor-management');
+                if (item.id === 'emp-mgmt') navigate('/employee');
+                if (item.id === 'dept-mgmt') navigate('/department');
+                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                if (item.id === 'fin-mgmt') navigate('/payroll');
+                if (item.id === 'fin-reports') navigate('/reports');
+                if (item.id === 'payroll-mgmt') navigate('/salary-management');
+              }}
+              className={cn(
+                "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
+                "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+              )}
+            >
+              <item.icon className="w-5 h-5 transition-transform group-hover:scale-110 text-slate-400 group-hover:text-blue-600" />
+              <span className="font-bold text-sm">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t border-slate-100 mx-2 mb-2">
           <button
             onClick={() => navigate('/setting')}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-400 hover:bg-gray-50 hover:text-blue-600"
+            className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-blue-600"
           >
-            <Settings className="w-5 h-5" />
-            <span className="font-medium text-sm">{t.settings}</span>
+            <Settings className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
+            <span className="text-sm font-bold">{t.settings}</span>
           </button>
+        </div>
+
+        <div className="p-4 border-t border-slate-100 mx-2 pb-8 bg-slate-50/50 rounded-b-[40px]">
+          <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-700 flex items-center justify-center text-white font-black text-xs">
+              AD
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black text-slate-900 truncate">Dr. Ahmed Khaled</p>
+              <p className="text-[9px] font-bold text-slate-400 uppercase">Administrator</p>
+            </div>
+            <button
+              onClick={() => navigate('/')}
+              className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </aside>
 
