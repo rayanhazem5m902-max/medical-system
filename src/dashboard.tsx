@@ -41,7 +41,7 @@ const translations = {
     appointments: 'المواعيد',
     reception: 'الاستقبال',
     doctors: 'الأطباء',
-    pharmacy: 'الصيدلي',
+    pharmacy: 'الصيدلية',
     management: 'الإدارة',
     doctorManagement: 'إدارة الأطباء',
     servicesManagement: 'إدارة الخدمات',
@@ -87,13 +87,12 @@ const translations = {
     appointments: 'Appointments',
     reception: 'Reception',
     doctors: 'Doctors',
-    pharmacy: 'Pharmacist',
+    pharmacy: 'Pharmacy',
     management: 'Management',
     doctorManagement: 'Doctor Management',
     servicesManagement: 'Services Management',
     pharmacyWarehouse: 'Pharmacy & Warehouse',
     financialManagement: 'Financial Management',
-    financialReports: 'Financial Reports',
     payrollManagement: 'Payroll Management',
     deptManagement: 'Departments Management',
     employeeManagement: 'Employee Management',
@@ -143,7 +142,7 @@ export default function Dashboard() {
     { id: 'appts', label: t.appointments, icon: Calendar, active: window.location.pathname === '/appointment' },
     { id: 'reception', label: t.reception, icon: ClipboardList, active: window.location.pathname === '/reception' },
     { id: 'doctors', label: t.doctors, icon: Activity, active: window.location.pathname === '/doctor-management' },
-    { id: 'pharmacy', label: t.pharmacy, icon: Pill, active: window.location.pathname === '/dispense' },
+    { id: 'pharmacy', label: t.pharmacy, icon: Pill, active: window.location.pathname === '/pharmacy' },
     { id: 'laboratory', label: t.laboratory, icon: Microscope, active: window.location.pathname === '/laboratory' },
   ];
 
@@ -154,7 +153,6 @@ export default function Dashboard() {
     { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse },
     { id: 'dept-mgmt', label: t.deptManagement, icon: Layers },
     { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet },
-    { id: 'fin-reports', label: t.financialReports, icon: FileText },
     { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins },
   ];
 
@@ -214,10 +212,10 @@ export default function Dashboard() {
                 if (item.id === 'patients') navigate('/patients');
                 if (item.id === 'dash') navigate('/dashboard');
                 if (item.id === 'reception') navigate('/reception');
-                if (item.id === 'pharmacy') navigate('/dispense');
+                if (item.id === 'pharmacy') navigate('/pharmacy');
                 if (item.id === 'laboratory') navigate('/laboratory');
                 if (item.id === 'appts') navigate('/appointment');
-                if (item.id === 'doctors') navigate('/doctor-management');
+                if (item.id === 'doctors') navigate('/doctors');
               }}
               className={cn(
                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
@@ -241,9 +239,8 @@ export default function Dashboard() {
                 if (item.id === 'doc-mgmt') navigate('/doctor-management');
                 if (item.id === 'emp-mgmt') navigate('/employee');
                 if (item.id === 'dept-mgmt') navigate('/department');
-                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                if (item.id === 'pharma-mgmt') navigate('/pharmacy-inventory');
                 if (item.id === 'fin-mgmt') navigate('/payroll');
-                if (item.id === 'fin-reports') navigate('/reports');
                 if (item.id === 'payroll-mgmt') navigate('/salary-management');
               }}
               className={cn(

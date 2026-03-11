@@ -1,9 +1,9 @@
 import { useState } from 'react';
+
 import {
     Users,
     Calendar,
     ClipboardList,
-    FileText,
     Search,
     Fingerprint,
     Plus,
@@ -19,8 +19,6 @@ import {
     CheckCircle2,
     AlertCircle,
     Clock,
-    ChevronRight,
-    ChevronLeft,
     Activity,
     Check,
     Pill,
@@ -75,8 +73,6 @@ const translations = {
         statusInProgress: 'قيد الكشف',
         statusCompleted: 'مكتمل',
         availableNow: 'متاح الآن',
-        liveSystem: 'نظام حي',
-        statNote: 'تم تسجيل 45 حالة جديدة اليوم بنسبة زيادة 12% عن الأسبوع الماضي.',
         emergencyContact: 'اتصال طارئ',
         quickAction: 'الإجراء السريع',
         dashboard: 'لوحة القيادة',
@@ -88,7 +84,6 @@ const translations = {
         pharmacyWarehouse: 'إدارة الصيدلية والمخزون',
         deptManagement: 'إدارة الأقسام',
         financialManagement: 'الإدارة المالية',
-        financialReports: 'التقارير المالية',
         payrollManagement: 'إدارة الرواتب',
         settings: 'الإعدادات',
         nationality: 'الجنسية',
@@ -139,8 +134,6 @@ const translations = {
         statusInProgress: 'In Progress',
         statusCompleted: 'Completed',
         availableNow: 'Available Now',
-        liveSystem: 'Live System',
-        statNote: '45 new cases registered today, a 12% increase compared to last week.',
         emergencyContact: 'Emergency Contact',
         quickAction: 'Quick Action',
         dashboard: 'Dashboard',
@@ -152,7 +145,6 @@ const translations = {
         pharmacyWarehouse: 'Pharmacy & Warehouse',
         deptManagement: 'Departments Management',
         financialManagement: 'Financial Management',
-        financialReports: 'Financial Reports',
         payrollManagement: 'Payroll Management',
         settings: 'Settings',
         nationality: 'Nationality',
@@ -181,7 +173,6 @@ export default function ReceptionPage() {
     const [selectedDoctorId, setSelectedDoctorId] = useState<number>(1);
     const [showReceipt, setShowReceipt] = useState(false);
     const [showReceiptModal, setShowReceiptModal] = useState(false);
-    const [view, setView] = useState('main');
     const navigate = useNavigate();
     const isRTL = lang === 'ar';
     const t = translations[lang] as typeof translations.ar;
@@ -190,8 +181,8 @@ export default function ReceptionPage() {
         { id: 'dash', label: t.dashboard, icon: LayoutDashboard, active: window.location.pathname === '/dashboard' },
         { id: 'patients', label: t.patients, icon: Users, active: window.location.pathname === '/patients' },
         { id: 'appts', label: t.appointments, icon: Calendar, active: window.location.pathname === '/appointment' },
-        { id: 'reception', label: t.reception, icon: ClipboardList, active: true }, // Active state will be handled by item.id === 'reception'
-        { id: 'doctors', label: t.doctors, icon: UserCog, active: window.location.pathname === '/doctor' },
+        { id: 'reception', label: t.reception, icon: ClipboardList, active: true },
+        { id: 'doctors', label: t.doctors, icon: UserCog, active: window.location.pathname === '/doctors' },
         { id: 'pharmacy', label: t.pharmacy, icon: Pill, active: window.location.pathname === '/dispense' },
         { id: 'laboratory', label: t.laboratory, icon: Microscope, active: window.location.pathname === '/laboratory' },
     ];
@@ -203,7 +194,6 @@ export default function ReceptionPage() {
         { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Pill },
         { id: 'dept-mgmt', label: t.deptManagement, icon: LayoutDashboard },
         { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet },
-        { id: 'fin-reports', label: t.financialReports, icon: FileText },
         { id: 'payroll-mgmt', label: t.payrollManagement, icon: Banknote },
     ];
 
@@ -257,12 +247,12 @@ export default function ReceptionPage() {
             )}>
                 <div className="p-8 pb-4">
                     <div className="flex items-center gap-4 group">
-                        <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-12 h-12 bg-[#1a4fa0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
                             <Activity className="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <h1 className="text-lg font-black tracking-tight text-slate-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</h1>
-                            <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+                            <p className="text-[10px] text-[#1a4fa0] font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
                         </div>
                     </div>
                 </div>
@@ -274,20 +264,21 @@ export default function ReceptionPage() {
                         <button
                             key={item.id}
                             onClick={() => {
-                                if (item.id === 'reception') setView('main');
+                                if (item.id === 'reception') {/* handle re-render or view reset if needed */; }
                                 if (item.id === 'dash') navigate('/dashboard');
                                 if (item.id === 'patients') navigate('/patients');
                                 if (item.id === 'pharmacy') navigate('/dispense');
                                 if (item.id === 'laboratory') navigate('/laboratory');
                                 if (item.id === 'appts') navigate('/appointment');
-                                if (item.id === 'doctors') navigate('/doctor-management');
+                                if (item.id === 'doctors') navigate('/doctors');
+                                if (item.id === 'invoices') navigate('/invoices');
                             }}
                             className={cn(
                                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
-                                item.id === 'reception' ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                                item.id === 'reception' ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
                             )}
                         >
-                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'reception' ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'reception' ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -304,17 +295,16 @@ export default function ReceptionPage() {
                                 if (item.id === 'doc-mgmt') navigate('/doctor-management');
                                 if (item.id === 'emp-mgmt') navigate('/employee');
                                 if (item.id === 'dept-mgmt') navigate('/department');
-                                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                                if (item.id === 'pharma-mgmt') navigate('/pharmacy-inventory');
                                 if (item.id === 'fin-mgmt') navigate('/payroll');
-                                if (item.id === 'fin-reports') navigate('/reports');
                                 if (item.id === 'payroll-mgmt') navigate('/salary-management');
                             }}
                             className={cn(
                                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
-                                "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                                "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
                             )}
                         >
-                            <item.icon className="w-5 h-5 transition-transform group-hover:scale-110 text-slate-400 group-hover:text-blue-600" />
+                            <item.icon className="w-5 h-5 transition-transform group-hover:scale-110 text-slate-400 group-hover:text-[#1a4fa0]" />
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -405,7 +395,7 @@ export default function ReceptionPage() {
                 <main className="flex-1 overflow-hidden flex flex-col md:flex-row">
                     <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6 space-y-4">
                         <div className="flex overflow-x-auto no-scrollbar pb-1">
-                            <div className="bg-white p-0.5 rounded-xl shadow-sm border border-slate-200 inline-flex flex-nowrap shrink-0">
+                            <div className="flex gap-2 bg-slate-100/50 p-1.5 rounded-xl border border-slate-200 shadow-inner">
                                 {[
                                     { id: 'register', label: t.registerNew },
                                     { id: 'book', label: t.bookAppointment },
@@ -416,10 +406,10 @@ export default function ReceptionPage() {
                                         key={tab.id}
                                         onClick={() => setActiveMainTab(tab.id)}
                                         className={cn(
-                                            "px-4 py-1.5 text-[10px] font-black rounded-lg transition-all whitespace-nowrap",
+                                            "px-8 py-3 text-xs font-black rounded-xl transition-all whitespace-nowrap",
                                             activeMainTab === tab.id
-                                                ? "bg-blue-600 text-white shadow-sm"
-                                                : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                                                ? "bg-white text-blue-600 shadow-md transform scale-[1.02]"
+                                                : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                                         )}
                                     >
                                         {tab.label}
@@ -431,14 +421,14 @@ export default function ReceptionPage() {
                         <div className="bg-white rounded-[24px] border border-slate-200 shadow-md overflow-hidden relative min-h-[500px]">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
-                            <div className="p-5 md:p-8 relative">
+                            <div className="p-8 md:p-12 relative">
                                 {activeMainTab === 'register' && (
-                                    <div className="space-y-6 max-w-3xl animate-in slide-in-from-bottom-2 duration-300">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <div className="w-1.5 h-4 bg-blue-600 rounded-full" />
-                                            <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">{t.registerNew}</h3>
+                                    <div className="space-y-10 animate-in slide-in-from-bottom-2 duration-300">
+                                        <div className="flex items-center gap-2 mb-6">
+                                            <div className="w-2 h-7 bg-blue-600 rounded-full" />
+                                            <h3 className="text-lg font-black text-slate-800 uppercase tracking-widest">{t.registerNew}</h3>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                                             {/* Full Name */}
                                             <div className="space-y-1.5">
                                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isRTL ? 'الاسم الكامل' : 'Full Name'}</label>
@@ -510,21 +500,23 @@ export default function ReceptionPage() {
                                                 </div>
                                             </div>
 
-                                            <button className="md:col-span-2 py-4 bg-blue-600 text-white rounded-xl font-black text-[12px] shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest mt-4">
-                                                <Check className="w-5 h-5" />
-                                                <span>{t.savePatient}</span>
-                                            </button>
+                                            <div className="lg:col-span-3 pt-6 border-t border-slate-100">
+                                                <button className="w-full md:w-auto px-12 py-5 bg-blue-600 text-white rounded-2xl font-black text-[14px] shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98] uppercase tracking-widest mx-auto">
+                                                    <Check className="w-6 h-6" />
+                                                    <span>{t.savePatient}</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
 
                                 {activeMainTab === 'book' && (
-                                    <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="flex-1 space-y-6">
+                                    <div className="flex flex-col xl:flex-row gap-12 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                        <div className="flex-1 space-y-10">
                                             <section>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <div className="w-1 h-3 bg-blue-600 rounded-full" />
-                                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.doctorSelection}</h3>
+                                                <div className="flex items-center gap-3 mb-6">
+                                                    <div className="w-2 h-6 bg-blue-600 rounded-full" />
+                                                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">{t.doctorSelection}</h3>
                                                 </div>
                                                 <div className="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-sm">
                                                     <table className="w-full text-right">
@@ -566,9 +558,9 @@ export default function ReceptionPage() {
 
                                             {/* Visit Type in Book Tab */}
                                             <section>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <div className="w-1 h-3 bg-blue-600 rounded-full" />
-                                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.visitType}</h3>
+                                                <div className="flex items-center gap-3 mb-6">
+                                                    <div className="w-2 h-6 bg-blue-600 rounded-full" />
+                                                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">{t.visitType}</h3>
                                                 </div>
                                                 <div className="flex gap-2">
                                                     {[
@@ -590,7 +582,13 @@ export default function ReceptionPage() {
                                                 </div>
                                             </section>
                                             <section>
-                                                <div className="flex items-center justify-between mb-3"><div className="flex items-center gap-2"><div className="w-1 h-3 bg-blue-600 rounded-full" /><h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.availableTimes}</h3></div><div className="px-2 py-1 bg-blue-50 text-blue-700 rounded-lg text-[9px] font-black">05 MAR 2024</div></div>
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-2 h-6 bg-blue-600 rounded-full" />
+                                                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">{t.availableTimes}</h3>
+                                                    </div>
+                                                    <div className="px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-xs font-black border border-blue-100 italic">05 MAR 2024</div>
+                                                </div>
                                                 <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-4 gap-2">
                                                     {timeSlots.map(time => (
                                                         <button key={time} onClick={() => setSelectedTime(time)} className={cn("py-2 px-1 text-[11px] font-black rounded-lg border transition-all", selectedTime === time ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200" : "bg-white border-slate-100 text-slate-500 hover:border-blue-200")}>{time}</button>
@@ -666,27 +664,27 @@ export default function ReceptionPage() {
                                 )}
 
                                 {activeMainTab === 'queue' && (
-                                    <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
-                                        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-1.5 h-4 bg-blue-600 rounded-full" />
-                                                <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">{t.queueList}</h3>
+                                    <div className="space-y-8 animate-in slide-in-from-bottom-2 duration-300">
+                                        <div className="flex items-center justify-between border-b border-slate-100 pb-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-2 h-6 bg-blue-600 rounded-full" />
+                                                <h3 className="text-lg font-black text-slate-800 uppercase tracking-widest">{t.queueList}</h3>
                                             </div>
                                             <div className="flex gap-2">
                                                 <div className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black border border-emerald-100">8 {isRTL ? 'مكتمل' : 'Completed'}</div>
                                                 <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black border border-blue-100">4 {isRTL ? 'في الانتظار' : 'Waiting'}</div>
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-1 gap-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {queueMembers.map(item => (
-                                                <div key={item.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 group hover:bg-white hover:shadow-lg transition-all">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-200 flex items-center justify-center text-xs font-black text-slate-400 group-hover:text-blue-600 group-hover:border-blue-200 shadow-sm">#{item.id}</div>
+                                                <div key={item.id} className="flex items-center justify-between p-6 bg-slate-50 rounded-[32px] border border-slate-200 group hover:bg-white hover:shadow-2xl hover:border-blue-100 transition-all cursor-default">
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="w-16 h-16 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-sm font-black text-slate-400 group-hover:text-blue-600 group-hover:border-blue-200 shadow-sm">#{item.id}</div>
                                                         <div>
-                                                            <p className="text-sm font-black text-slate-900">{item.name}</p>
-                                                            <div className="flex items-center gap-3 mt-1">
-                                                                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1"><Clock className="w-3 h-3" /> {item.time}</span>
-                                                                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1"><UserCog className="w-3 h-3" /> {item.dr}</span>
+                                                            <p className="text-lg font-black text-slate-900">{item.name}</p>
+                                                            <div className="flex items-center gap-4 mt-2">
+                                                                <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5"><Clock className="w-4 h-4" /> {item.time}</span>
+                                                                <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5"><UserCog className="w-4 h-4" /> {item.dr}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -706,13 +704,13 @@ export default function ReceptionPage() {
                                 )}
 
                                 {activeMainTab === 'cons' && (
-                                    <div className="space-y-8 animate-in slide-in-from-bottom-2 duration-300">
+                                    <div className="space-y-12 animate-in slide-in-from-bottom-2 duration-300">
                                         {/* Emergency Section */}
                                         <section>
-                                            <div className="flex items-center justify-between mb-4">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-1.5 h-4 bg-red-600 rounded-full" />
-                                                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">{isRTL ? 'استشارات الطوارئ' : 'Emergency Consultations'}</h3>
+                                            <div className="flex items-center justify-between mb-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2 h-7 bg-red-600 rounded-full" />
+                                                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-widest">{isRTL ? 'استشارات الطوارئ' : 'Emergency Consultations'}</h3>
                                                 </div>
                                                 <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-black rounded-full animate-pulse">{isRTL ? 'حالة حرجة' : 'CRITICAL'}</span>
                                             </div>
@@ -838,30 +836,9 @@ export default function ReceptionPage() {
                             </section>
                         )}
 
-                        <section className="pt-6 border-t border-slate-50">
-                            <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-5">{t.printCenter}</h3>
-                            <div className="space-y-2">
-                                {[
-                                    { id: 'ticket', label: t.printTicket, icon: Printer },
-                                    { id: 'receipt', label: t.printReceipt, icon: FileText }
-                                ].map(item => (
-                                    <button key={item.id} className="w-full flex items-center justify-between p-3 bg-white border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-slate-50 transition-all group">
-                                        <div className="flex items-center gap-3"><div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-600 transition-all"><item.icon className="w-4 h-4" /></div><span className="text-[10px] font-black text-slate-600 group-hover:text-slate-900">{item.label}</span></div>
-                                        {isRTL ? <ChevronLeft className="w-3 h-3 text-slate-300 group-hover:text-blue-500" /> : <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-blue-500" />}
-                                    </button>
-                                ))}
-                            </div>
-                        </section>
 
-                        <div className="p-5 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[28px] text-white overflow-hidden relative">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl -mr-8 -mt-8" />
-                            <div className="flex items-center gap-2 mb-3"><div className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse"><Check className="w-2.5 h-2.5 text-white" /></div><span className="text-[9px] font-black uppercase tracking-widest">{t.availableNow}</span></div>
-                            <p className="text-[11px] font-black leading-relaxed">{t.statNote}</p>
-                            <div className="mt-4 flex gap-2">
-                                <div className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-blue-400 w-3/4" /></div>
-                                <span className="text-[10px] font-black">75%</span>
-                            </div>
-                        </div>
+
+
                     </div>
                 </main>
             </div>

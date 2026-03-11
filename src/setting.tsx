@@ -26,7 +26,7 @@ const Setting: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
   const [darkMode, setDarkMode] = useState(false);
-  const [primaryColor, setPrimaryColor] = useState('#2b7de9');
+  const [primaryColor, setPrimaryColor] = useState('#1a4fa0');
   const [secondaryColor, setSecondaryColor] = useState('#1a4fa0');
   const [hospitalName, setHospitalName] = useState('مستشفى الشفاء');
   const [email, setEmail] = useState('info@alshifa-hospital.com');
@@ -62,7 +62,6 @@ const Setting: React.FC = () => {
       pharmacyWarehouse: 'إدارة الصيدلية والمخزون',
       deptManagement: 'إدارة الأقسام',
       financialManagement: 'الإدارة المالية',
-      financialReports: 'التقارير المالية',
       payrollManagement: 'إدارة الرواتب',
       settings: 'إعدادات النظام',
       settingsSub: 'تخصيص إعدادات النظام الأساسية والمظهر',
@@ -115,7 +114,6 @@ const Setting: React.FC = () => {
       pharmacyWarehouse: 'Pharmacy & Warehouse',
       deptManagement: 'Departments Management',
       financialManagement: 'Financial Management',
-      financialReports: 'Financial Reports',
       payrollManagement: 'Payroll Management',
       settings: 'System Settings',
       settingsSub: 'Customize core system settings and appearance',
@@ -174,7 +172,6 @@ const Setting: React.FC = () => {
     { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse },
     { id: 'dept-mgmt', label: t.deptManagement, icon: Layers },
     { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet },
-    { id: 'fin-reports', label: t.financialReports, icon: FileText },
     { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins },
   ];
 
@@ -235,7 +232,7 @@ const Setting: React.FC = () => {
       )}>
         <div className="p-8 pb-4 text-right">
           <div className="flex items-center gap-4 group justify-start">
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-[#1a4fa0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
               <Activity className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -257,14 +254,14 @@ const Setting: React.FC = () => {
                 if (item.id === 'patients') navigate('/patients');
                 if (item.id === 'pharmacy') navigate('/dispense');
                 if (item.id === 'laboratory') navigate('/laboratory');
-                if (item.id === 'doctors') navigate('/doctor-management');
+                if (item.id === 'doctors') navigate('/doctors');
               }}
               className={cn(
                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group text-right justify-start",
-                "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
               )}
             >
-              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", "text-slate-400 group-hover:text-blue-600")} />
+              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", "text-slate-400 group-hover:text-[#1a4fa0]")} />
               <span>{item.label}</span>
             </button>
           ))}
@@ -281,17 +278,16 @@ const Setting: React.FC = () => {
                 if (item.id === 'emp-mgmt') navigate('/employee');
                 if (item.id === 'doc-mgmt') navigate('/doctor-management');
                 if (item.id === 'dept-mgmt') navigate('/department');
-                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                if (item.id === 'pharma-mgmt') navigate('/pharmacy-inventory');
                 if (item.id === 'fin-mgmt') navigate('/payroll');
-                if (item.id === 'fin-reports') navigate('/reports');
                 if (item.id === 'payroll-mgmt') navigate('/salary-management');
               }}
               className={cn(
                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group text-right justify-start",
-                "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
               )}
             >
-              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", "text-slate-400 group-hover:text-blue-600")} />
+              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", "text-slate-400 group-hover:text-[#1a4fa0]")} />
               <span>{item.label}</span>
             </button>
           ))}
@@ -302,7 +298,7 @@ const Setting: React.FC = () => {
             onClick={() => navigate('/setting')}
             className={cn(
               "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-right justify-start group",
-              "bg-blue-600 text-white shadow-xl shadow-blue-600/20"
+              "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20"
             )}
           >
             <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
@@ -312,7 +308,7 @@ const Setting: React.FC = () => {
 
         <div className="p-4 border-t border-slate-100 mx-2 pb-8 bg-slate-50/50 rounded-b-[40px] text-right">
           <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-200 shadow-sm justify-start text-right">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-700 flex items-center justify-center text-white font-black text-xs">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1a4fa0] to-blue-700 flex items-center justify-center text-white font-black text-xs">
               AD
             </div>
             <div className="flex-1 min-w-0">
@@ -392,7 +388,7 @@ const Setting: React.FC = () => {
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl text-sm font-black shadow-2xl shadow-blue-100 transition-all active:scale-95 group"
+                className="flex items-center gap-2 bg-[#1a4fa0] hover:bg-blue-700 text-white px-8 py-3 rounded-2xl text-sm font-black shadow-2xl shadow-blue-100 transition-all active:scale-95 group"
               >
                 <Save className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span>{t.saveChanges}</span>

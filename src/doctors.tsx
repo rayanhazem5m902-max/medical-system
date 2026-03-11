@@ -5,7 +5,7 @@ import {
     ClipboardList, UsersRound, Contact2, Briefcase, Warehouse,
     Layers, Wallet, FileText, Coins, Settings, Search,
     Menu, Globe, Shield, AlertTriangle, Wand2,
-    Activity, Bell, LogOut, Users, Printer, Save, X
+    Activity, Bell, LogOut, Users, Printer, Save, X, Stethoscope, User
 } from 'lucide-react';
 import { cn } from './utils/cn';
 
@@ -28,7 +28,6 @@ const translations = {
         pharmacyWarehouse: 'إدارة الصيدلية والمخزون',
         deptManagement: 'إدارة الأقسام',
         financialManagement: 'الإدارة المالية',
-        financialReports: 'التقارير المالية',
         payrollManagement: 'إدارة الرواتب',
         settings: 'الإعدادات',
         todaySchedule: 'جدول مواعيد اليوم (العيادات اليومية)',
@@ -58,6 +57,11 @@ const translations = {
         medicalRecord: 'السجل الطبي',
         close: 'إغلاق',
         searchPlaceholder: 'بحث عن مريض في الجدول...',
+        diagnosis: 'التشخيص الطبي',
+        healthStatus: 'الحالة الصحية',
+        treatmentPlan: 'الخطة العلاجية',
+        followUpLabel: 'المتابعة والزيارات',
+        clinicalExam: 'الفحص السريري',
     },
     en: {
         hospitalName: 'Al-Shifa Hospital',
@@ -75,7 +79,6 @@ const translations = {
         pharmacyWarehouse: 'Pharmacy & Warehouse',
         deptManagement: 'Departments Management',
         financialManagement: 'Financial Management',
-        financialReports: 'Financial Reports',
         payrollManagement: 'Payroll Management',
         settings: 'Settings',
         todaySchedule: "Today's Clinic Schedule",
@@ -106,6 +109,11 @@ const translations = {
         medicalRecord: 'Medical Record',
         close: 'Close',
         searchPlaceholder: 'Search patients in schedule...',
+        diagnosis: 'Medical Diagnosis',
+        healthStatus: 'Health Status',
+        treatmentPlan: 'Treatment Plan',
+        followUpLabel: 'Follow-up & Visits',
+        clinicalExam: 'Clinical Examination',
     }
 };
 
@@ -131,6 +139,7 @@ export default function Doctors() {
     const [showHistoryDialog, setShowHistoryDialog] = useState(false);
     const [historyPatientId, setHistoryPatientId] = useState<number | null>(null);
 
+    const [activeRecordTab, setActiveRecordTab] = useState('basic');
     const navigate = useNavigate();
     const isRTL = lang === 'ar';
     const t = translations[lang];
@@ -155,14 +164,13 @@ export default function Doctors() {
     ];
 
     const managementItems = [
-        { id: 'doc-mgmt', label: t.doctorManagement, icon: UsersRound },
-        { id: 'emp-mgmt', label: t.employeeManagement, icon: Contact2 },
-        { id: 'serv-mgmt', label: t.servicesManagement, icon: Briefcase },
-        { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse },
-        { id: 'dept-mgmt', label: t.deptManagement, icon: Layers },
-        { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet },
-        { id: 'fin-reports', label: t.financialReports, icon: FileText },
-        { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins },
+        { id: 'doc-mgmt', label: t.doctorManagement, icon: UsersRound, active: false },
+        { id: 'emp-mgmt', label: t.employeeManagement, icon: Contact2, active: false },
+        { id: 'serv-mgmt', label: t.servicesManagement, icon: Briefcase, active: false },
+        { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse, active: false },
+        { id: 'dept-mgmt', label: t.deptManagement, icon: Layers, active: false },
+        { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet, active: false },
+        { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins, active: false },
     ];
 
     const handleSaveAll = () => {
@@ -191,12 +199,12 @@ export default function Doctors() {
             )}>
                 <div className="p-8 pb-4">
                     <div className="flex items-center gap-4 group">
-                        <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-12 h-12 bg-[#1a4fa0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
                             <Activity className="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <h1 className="text-lg font-black tracking-tight text-slate-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</h1>
-                            <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+                            <p className="text-[10px] text-[#1a4fa0] font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
                         </div>
                     </div>
                 </div>
@@ -217,10 +225,10 @@ export default function Doctors() {
                             }}
                             className={cn(
                                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group text-right justify-start",
-                                item.active ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                                item.active ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
                             )}
                         >
-                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -237,17 +245,16 @@ export default function Doctors() {
                                 if (item.id === 'serv-mgmt') navigate('/services');
                                 if (item.id === 'emp-mgmt') navigate('/employee');
                                 if (item.id === 'dept-mgmt') navigate('/department');
-                                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                                if (item.id === 'pharma-mgmt') navigate('/pharmacy-inventory');
                                 if (item.id === 'fin-mgmt') navigate('/payroll');
-                                if (item.id === 'fin-reports') navigate('/reports');
                                 if (item.id === 'payroll-mgmt') navigate('/salary-management');
                             }}
                             className={cn(
                                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group text-right justify-start",
-                                item.active ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                                item.active ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
                             )}
                         >
-                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -439,7 +446,7 @@ export default function Doctors() {
                                         </div>
                                     </div>
 
-                                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 overflow-y-auto no-scrollbar">
                                         <div className="space-y-6">
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-2 text-slate-900 justify-start">
@@ -453,20 +460,44 @@ export default function Doctors() {
 
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-2 text-slate-900 justify-start">
-                                                    <Activity className="w-4 h-4 text-emerald-600" />
-                                                    <h3 className="text-xs font-black uppercase tracking-widest">{t.currentStatus}</h3>
+                                                    <Stethoscope className="w-4 h-4 text-purple-600" />
+                                                    <h3 className="text-xs font-black uppercase tracking-widest">{t.clinicalExam}</h3>
                                                 </div>
                                                 <textarea
-                                                    value={patientStatus}
-                                                    onChange={(e) => setPatientStatus(e.target.value)}
-                                                    placeholder={t.notesPlaceholder}
-                                                    className="w-full h-32 p-5 bg-slate-50 border border-slate-200 rounded-[32px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all resize-none text-right"
+                                                    placeholder={isRTL ? 'تقرير الفحص السريري...' : 'Clinical exam report...'}
+                                                    className="w-full h-24 p-5 bg-slate-50 border border-slate-200 rounded-[28px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-purple-50 outline-none transition-all resize-none text-right"
                                                 />
+                                            </div>
+
+                                            <div className="grid grid-cols-1 gap-6">
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                        <Activity className="w-4 h-4 text-emerald-600" />
+                                                        <h3 className="text-xs font-black uppercase tracking-widest">{t.healthStatus}</h3>
+                                                    </div>
+                                                    <textarea
+                                                        value={patientStatus}
+                                                        onChange={(e) => setPatientStatus(e.target.value)}
+                                                        placeholder={t.notesPlaceholder}
+                                                        className="w-full h-24 p-5 bg-slate-50 border border-slate-200 rounded-[28px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all resize-none text-right"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div className="space-y-6 flex flex-col text-right">
-                                            <div className="space-y-3 flex-1">
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                    <FileText className="w-4 h-4 text-amber-600" />
+                                                    <h3 className="text-xs font-black uppercase tracking-widest">{t.diagnosis}</h3>
+                                                </div>
+                                                <textarea
+                                                    placeholder={isRTL ? 'التشخيص المبدئي والنهائي...' : 'Initial and final diagnosis...'}
+                                                    className="w-full h-24 p-5 bg-slate-50 border border-slate-200 rounded-[28px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-amber-50 outline-none transition-all resize-none text-right"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-3">
                                                 <div className="flex items-center gap-2 text-slate-900 justify-start">
                                                     <Pill className="w-4 h-4 text-indigo-600" />
                                                     <h3 className="text-xs font-black uppercase tracking-widest">{t.prescribeMedicine}</h3>
@@ -475,12 +506,36 @@ export default function Doctors() {
                                                     value={prescription}
                                                     onChange={(e) => setPrescription(e.target.value)}
                                                     placeholder={t.medicationPlaceholder}
-                                                    className="w-full h-full min-h-[150px] p-5 bg-indigo-50/30 border border-indigo-100 rounded-[32px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-indigo-50 outline-none transition-all resize-none text-right"
+                                                    className="w-full h-24 p-5 bg-indigo-50/30 border border-indigo-100 rounded-[28px] text-sm font-bold focus:bg-white focus:ring-4 focus:ring-indigo-50 outline-none transition-all resize-none text-right"
                                                 />
                                             </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                        <ClipboardList className="w-4 h-4 text-blue-600" />
+                                                        <h3 className="text-xs font-black uppercase tracking-widest">{t.treatmentPlan}</h3>
+                                                    </div>
+                                                    <textarea
+                                                        placeholder={isRTL ? 'الخطة المقررة...' : 'Planned steps...'}
+                                                        className="w-full h-20 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold outline-none text-right"
+                                                    />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-2 text-slate-900 justify-start">
+                                                        <Calendar className="w-4 h-4 text-blue-600" />
+                                                        <h3 className="text-xs font-black uppercase tracking-widest">{t.followUpLabel}</h3>
+                                                    </div>
+                                                    <textarea
+                                                        placeholder={isRTL ? 'موعد الزيارة القادمة...' : 'Next visit date...'}
+                                                        className="w-full h-20 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold outline-none text-right"
+                                                    />
+                                                </div>
+                                            </div>
+
                                             <button
                                                 onClick={handleSaveAll}
-                                                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-95 no-print"
+                                                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-95 no-print mt-2"
                                             >
                                                 <Wand2 className="w-5 h-5" />
                                                 <span>{t.savePrescription}</span>
@@ -521,30 +576,113 @@ export default function Doctors() {
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
-                        <div className="p-10 space-y-8">
-                            <div className="grid grid-cols-3 gap-6">
-                                <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'العمر' : 'Age'}</p>
-                                    <p className="text-lg font-black text-slate-900">{patientAppointments.find(p => p.id === historyPatientId)?.age}</p>
+                        <div className="flex border-b border-slate-100 px-8">
+                            {[
+                                { id: 'basic', label: isRTL ? 'معلومات' : 'Basic', icon: User },
+                                { id: 'clinical', label: t.clinicalExam, icon: Stethoscope },
+                                { id: 'labs', label: isRTL ? 'مختبر' : 'Labs', icon: Microscope },
+                                { id: 'plan', label: t.treatmentPlan, icon: ClipboardList },
+                                { id: 'follow', label: isRTL ? 'متابعة' : 'Follow', icon: Activity }
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveRecordTab(tab.id)}
+                                    className={cn(
+                                        "flex items-center gap-2 px-6 py-4 text-[11px] font-black uppercase tracking-wider transition-all relative",
+                                        activeRecordTab === tab.id ? "text-blue-600" : "text-slate-400 hover:text-slate-600"
+                                    )}
+                                >
+                                    <tab.icon className="w-4 h-4" />
+                                    <span>{tab.label}</span>
+                                    {activeRecordTab === tab.id && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full" />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="p-10 space-y-8 max-h-[60vh] overflow-y-auto no-scrollbar">
+                            {activeRecordTab === 'basic' && (
+                                <div className="space-y-8">
+                                    <div className="grid grid-cols-3 gap-6">
+                                        <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'العمر' : 'Age'}</p>
+                                            <p className="text-lg font-black text-slate-900">{patientAppointments.find(p => p.id === historyPatientId)?.age}</p>
+                                        </div>
+                                        <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'فصيلة الدم' : 'Blood'}</p>
+                                            <p className="text-lg font-black text-rose-600">{patientAppointments.find(p => p.id === historyPatientId)?.blood}</p>
+                                        </div>
+                                        <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'الجنس' : 'Gender'}</p>
+                                            <p className="text-lg font-black text-slate-900">{patientAppointments.find(p => p.id === historyPatientId)?.gender}</p>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                                            <Shield className="w-4 h-4 text-blue-600" />
+                                            {t.medicalHistory}
+                                        </h4>
+                                        <div className="p-6 bg-blue-50/50 border border-blue-100 rounded-[32px] text-sm font-bold text-slate-700 leading-relaxed italic text-right">
+                                            "{patientAppointments.find(p => p.id === historyPatientId)?.history}"
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'فصيلة الدم' : 'Blood'}</p>
-                                    <p className="text-lg font-black text-rose-600">{patientAppointments.find(p => p.id === historyPatientId)?.blood}</p>
+                            )}
+
+                            {activeRecordTab === 'clinical' && (
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-slate-50 border border-slate-100 rounded-[32px] text-right">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 justify-end">
+                                            {t.clinicalExam} <Stethoscope className="w-4 h-4 text-purple-600" />
+                                        </h4>
+                                        <p className="text-sm font-bold text-slate-700 leading-relaxed">فحص عام للحالة مع ملاحظة استقرار المؤشرات الحيوية.</p>
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'الجنس' : 'Gender'}</p>
-                                    <p className="text-lg font-black text-slate-900">{patientAppointments.find(p => p.id === historyPatientId)?.gender}</p>
+                            )}
+
+                            {activeRecordTab === 'labs' && (
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-slate-50 border border-slate-100 rounded-[32px] text-right">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 justify-end">
+                                            فحوصات المختبر والمعامل <Microscope className="w-4 h-4 text-blue-600" />
+                                        </h4>
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100">
+                                                <span className="text-emerald-600 font-bold text-xs">Normal</span>
+                                                <span className="text-xs font-black">CBC Test</span>
+                                            </div>
+                                            <div className="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100">
+                                                <span className="text-emerald-600 font-bold text-xs">Normal</span>
+                                                <span className="text-xs font-black">Glucose Fasting</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                                    <Shield className="w-4 h-4 text-blue-600" />
-                                    {t.medicalHistory}
-                                </h4>
-                                <div className="p-6 bg-blue-50/50 border border-blue-100 rounded-[32px] text-sm font-bold text-slate-700 leading-relaxed italic text-right">
-                                    "{patientAppointments.find(p => p.id === historyPatientId)?.history}"
+                            )}
+
+                            {activeRecordTab === 'plan' && (
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-slate-50 border border-slate-100 rounded-[32px] text-right">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 justify-end">
+                                            {t.treatmentPlan} <ClipboardList className="w-4 h-4 text-indigo-600" />
+                                        </h4>
+                                        <p className="text-sm font-bold text-slate-700 leading-relaxed">متابعة العلاج الدوائي الحالي مع تقليل الجرعة تدريجياً.</p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {activeRecordTab === 'follow' && (
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-slate-50 border border-slate-100 rounded-[32px] text-right">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 justify-end">
+                                            {t.followUpLabel} <Activity className="w-4 h-4 text-emerald-600" />
+                                        </h4>
+                                        <p className="text-sm font-bold text-slate-700 leading-relaxed">موعد الزيارة القادمة بعد أسبوعين للمتابعة الدورية.</p>
+                                    </div>
+                                </div>
+                            )}
+
                             <button
                                 onClick={() => setShowHistoryDialog(false)}
                                 className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all"

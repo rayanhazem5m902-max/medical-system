@@ -109,12 +109,12 @@ function Laboratory() {
       )}>
         <div className="p-8 pb-4">
           <div className="flex items-center gap-4 group">
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-[#1a4fa0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
               <Activity className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-lg font-black tracking-tight text-slate-900">مستشفى الشفاء</h1>
-              <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+              <p className="text-[10px] text-[#1a4fa0] font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
             </div>
           </div>
         </div>
@@ -132,14 +132,14 @@ function Laboratory() {
                 if (item.id === 'pharmacy') navigate('/dispense');
                 if (item.id === 'laboratory') navigate('/laboratory');
                 if (item.id === 'appts') navigate('/appointment');
-                if (item.id === 'doctors') navigate('/doctor-management');
+                if (item.id === 'doctors') navigate('/doctors');
               }}
               className={cn(
                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
-                item.id === 'laboratory' ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                item.id === 'laboratory' ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
               )}
             >
-              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'laboratory' ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'laboratory' ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
               <span>{item.label}</span>
             </button>
           ))}
@@ -175,9 +175,9 @@ function Laboratory() {
         <div className="p-4 border-t border-slate-100 mx-2 mb-2">
           <button
             onClick={() => navigate('/setting')}
-            className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+            className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
           >
-            <Settings className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
+            <Settings className="w-5 h-5 text-slate-400 group-hover:text-[#1a4fa0]" />
             <span className="text-sm font-bold">الإعدادات</span>
           </button>
         </div>

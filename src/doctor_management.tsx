@@ -5,7 +5,7 @@ import {
     ClipboardList, UsersRound, Contact2, Briefcase, Warehouse,
     Layers, Wallet, FileText, Coins, Settings, Search,
     Menu, Globe, Shield,
-    Activity, Bell, LogOut, X, UserPlus, User
+    Activity, Bell, LogOut, X, UserPlus, User, Phone, Wand2
 } from 'lucide-react';
 import { cn } from './utils/cn';
 
@@ -28,7 +28,6 @@ const translations = {
         pharmacyWarehouse: 'إدارة الصيدلية والمخزون',
         deptManagement: 'إدارة الأقسام',
         financialManagement: 'الإدارة المالية',
-        financialReports: 'التقارير المالية',
         payrollManagement: 'إدارة الرواتب',
         settings: 'الإعدادات',
         addDoctor: 'إضافة طبيب جديد',
@@ -99,7 +98,6 @@ const translations = {
         pharmacyWarehouse: 'Pharmacy & Warehouse',
         deptManagement: 'Departments Management',
         financialManagement: 'Financial Management',
-        financialReports: 'Financial Reports',
         payrollManagement: 'Payroll Management',
         settings: 'Settings',
         addDoctor: 'Add New Doctor',
@@ -172,8 +170,11 @@ export default function DoctorManagement() {
     const [lang, setLang] = useState<Lang>('ar');
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [selectedPatientId] = useState<number | null>(1);
+    const [patientStatus, setPatientStatus] = useState('');
+    const [prescription, setPrescription] = useState('');
     const [showAddDoctor, setShowAddDoctor] = useState(false);
-    const [doctors, setDoctors] = useState([
+    const [doctors] = useState([
         { id: 1, name: 'د. خالد العتيبي', code: 'DOC-101', specialty: 'جراحة القلب', dept: 'قسم القلب', status: 'active', patientsToday: 4 },
         { id: 2, name: 'د. ليلى حسن', code: 'DOC-102', specialty: 'طب الأطفال', dept: 'قسم الأطفال', status: 'active', patientsToday: 6 },
         { id: 3, name: 'د. محمد الراشد', code: 'DOC-103', specialty: 'جراحة العظام', dept: 'قسم العظام', status: 'vacation', patientsToday: 0 },
@@ -191,7 +192,7 @@ export default function DoctorManagement() {
         { id: 4, name: 'نورة السعدون', time: '11:00 AM', type: t.emergency, age: '52', gender: isRTL ? 'أنثى' : 'Female', blood: 'AB+', history: isRTL ? 'سكري من النوع الثاني. فحص دوري طارئ.' : 'Type 2 diabetes. Emergency routine check.' },
     ];
 
-    const [doctors, setDoctors] = useState([
+    const [doctors1, setDoctors1] = useState([
         { id: 1, name: 'د. خالد العتيبي', code: 'DOC-101', specialty: 'جراحة القلب', dept: 'قسم القلب', status: 'active', patientsToday: 4 },
         { id: 2, name: 'د. ليلى حسن', code: 'DOC-102', specialty: 'طب الأطفال', dept: 'قسم الأطفال', status: 'active', patientsToday: 6 },
         { id: 3, name: 'د. محمد الراشد', code: 'DOC-103', specialty: 'جراحة العظام', dept: 'قسم العظام', status: 'vacation', patientsToday: 0 },
@@ -217,7 +218,6 @@ export default function DoctorManagement() {
         { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse },
         { id: 'dept-mgmt', label: t.deptManagement, icon: Layers },
         { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet },
-        { id: 'fin-reports', label: t.financialReports, icon: FileText },
         { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins },
     ];
 
@@ -247,12 +247,12 @@ export default function DoctorManagement() {
             )}>
                 <div className="p-8 pb-4">
                     <div className="flex items-center gap-4 group">
-                        <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-12 h-12 bg-[#1a4fa0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
                             <Activity className="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <h1 className="text-lg font-black tracking-tight text-slate-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</h1>
-                            <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+                            <p className="text-[10px] text-[#1a4fa0] font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
                         </div>
                     </div>
                 </div>
@@ -273,10 +273,10 @@ export default function DoctorManagement() {
                             }}
                             className={cn(
                                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group text-right justify-start",
-                                item.active ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                                item.active ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
                             )}
                         >
-                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -293,17 +293,16 @@ export default function DoctorManagement() {
                                 if (item.id === 'serv-mgmt') navigate('/services');
                                 if (item.id === 'emp-mgmt') navigate('/employee');
                                 if (item.id === 'dept-mgmt') navigate('/department');
-                                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                                if (item.id === 'pharma-mgmt') navigate('/pharmacy-inventory');
                                 if (item.id === 'fin-mgmt') navigate('/payroll');
-                                if (item.id === 'fin-reports') navigate('/reports');
                                 if (item.id === 'payroll-mgmt') navigate('/salary-management');
                             }}
                             className={cn(
                                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group text-right justify-start",
-                                item.active ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                                item.active ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
                             )}
                         >
-                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+                            <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.active ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -312,9 +311,9 @@ export default function DoctorManagement() {
                 <div className="p-4 border-t border-slate-100 mx-2 mb-2">
                     <button
                         onClick={() => navigate('/setting')}
-                        className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-blue-600 text-right justify-start"
+                        className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0] text-right justify-start"
                     >
-                        <Settings className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
+                        <Settings className="w-5 h-5 text-slate-400 group-hover:text-[#1a4fa0]" />
                         <span className="text-sm font-bold">{t.settings}</span>
                     </button>
                 </div>
@@ -379,7 +378,7 @@ export default function DoctorManagement() {
                         </button>
                         <button
                             onClick={() => setShowAddDoctor(true)}
-                            className="p-3 bg-blue-600 text-white hover:bg-blue-700 rounded-2xl transition-all border border-blue-100 flex items-center gap-2 group active:scale-95 shadow-lg shadow-blue-200"
+                            className="p-3 bg-[#1a4fa0] text-white hover:bg-blue-700 rounded-2xl transition-all border border-blue-100 flex items-center gap-2 group active:scale-95 shadow-lg shadow-blue-200"
                         >
                             <UsersRound className="w-5 h-5" />
                             <span className="text-xs font-black uppercase tracking-widest">{t.addDoctor}</span>
@@ -475,63 +474,6 @@ export default function DoctorManagement() {
                     </div>
                 </main>
             </div>
-            {/* History Dialog */}
-            {showHistoryDialog && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in duration-300">
-                        <div className="p-8 bg-blue-600 text-white flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
-                                    <FileText className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-black">{t.medicalRecord}</h3>
-                                    <p className="text-xs text-blue-100 font-bold uppercase tracking-widest opacity-80">
-                                        {patientAppointments.find(p => p.id === historyPatientId)?.name}
-                                    </p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setShowHistoryDialog(false)}
-                                className="p-3 hover:bg-white/10 rounded-2xl transition-all"
-                            >
-                                <X className="w-6 h-6" />
-                            </button>
-                        </div>
-                        <div className="p-10 space-y-8">
-                            <div className="grid grid-cols-3 gap-6">
-                                <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'العمر' : 'Age'}</p>
-                                    <p className="text-lg font-black text-slate-900">{patientAppointments.find(p => p.id === historyPatientId)?.age}</p>
-                                </div>
-                                <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'فصيلة الدم' : 'Blood'}</p>
-                                    <p className="text-lg font-black text-rose-600">{patientAppointments.find(p => p.id === historyPatientId)?.blood}</p>
-                                </div>
-                                <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{isRTL ? 'الجنس' : 'Gender'}</p>
-                                    <p className="text-lg font-black text-slate-900">{patientAppointments.find(p => p.id === historyPatientId)?.gender}</p>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                                    <Shield className="w-4 h-4 text-blue-600" />
-                                    {t.medicalHistory}
-                                </h4>
-                                <div className="p-6 bg-blue-50/50 border border-blue-100 rounded-[32px] text-sm font-bold text-slate-700 leading-relaxed italic">
-                                    "{patientAppointments.find(p => p.id === historyPatientId)?.history}"
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setShowHistoryDialog(false)}
-                                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all"
-                            >
-                                {t.close}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
             {/* Add Doctor Modal */}
             {showAddDoctor && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">

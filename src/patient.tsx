@@ -108,10 +108,18 @@ const translations = {
     servicesManagement: 'إدارة الخدمات',
     pharmacyWarehouse: 'إدارة الصيدلية والمخزون',
     deptManagement: 'إدارة الأقسام',
-    financialManagement: 'الإدارة المالية',
     financialReports: 'التقارير المالية',
     payrollManagement: 'إدارة الرواتب',
-    settings: 'الإعدادات'
+    settings: 'الإعدادات',
+    laboratoryResults: 'نتائج المختبر والمعامل',
+    followUpPlan: 'خطة المتابعة والزيارات',
+    testName: 'اسم الفحص',
+    result: 'النتيجة',
+    normalRange: 'المعدل الطبيعي',
+    date: 'التاريخ',
+    followUpNotes: 'ملاحظات المتابعة',
+    nextVisit: 'الزيارة القادمة المتوقعة',
+    physicalTherapy: 'العلاج الطبيعي والتأهيل'
   },
   en: {
     medicalRecord: 'Medical Record',
@@ -190,7 +198,16 @@ const translations = {
     financialManagement: 'Financial Management',
     financialReports: 'Financial Reports',
     payrollManagement: 'Payroll Management',
-    settings: 'Settings'
+    settings: 'Settings',
+    laboratoryResults: 'Laboratory & Test Results',
+    followUpPlan: 'Follow-up & Visit Schedule',
+    testName: 'Test Name',
+    result: 'Result',
+    normalRange: 'Normal Range',
+    date: 'Date',
+    followUpNotes: 'Follow-up Notes',
+    nextVisit: 'Expected Next Visit',
+    physicalTherapy: 'Physical Therapy & Rehab'
   }
 };
 
@@ -222,14 +239,13 @@ const Patient: React.FC = () => {
     { id: 'fin-reports', label: t.financialReports, icon: FileText },
     { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins },
   ];
-
-
-
   const tabs = [
     { id: 'patient', label: t.patientInfo, icon: User },
     { id: 'clinical', label: t.clinicalStatus, icon: Activity },
+    { id: 'labs', label: t.laboratoryResults, icon: Microscope },
     { id: 'history', label: t.medicalHistory, icon: FileText },
     { id: 'treatment', label: t.treatmentPlan, icon: Pill },
+    { id: 'followup', label: t.followUpPlan, icon: Calendar },
   ];
 
   return (

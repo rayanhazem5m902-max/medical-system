@@ -5,8 +5,8 @@ type Lang = 'en' | 'ar';
 
 const translations: Record<Lang, Record<string, string>> = {
   en: {
-    portalTitle: 'Medical Portal',
-    portalDesc: 'Welcome to our healthcare platform. Access your medical records and connect with healthcare professionals.',
+    portalTitle: 'Al-Amal Hospital Management',
+    portalDesc: 'A comprehensive hospital management system designed to assist doctors and streamline medical department management with high efficiency.',
     signIn: 'Sign In',
     signInDesc: 'Enter your credentials to continue',
     username: 'Username',
@@ -19,10 +19,12 @@ const translations: Record<Lang, Record<string, string>> = {
     signUp: 'Sign up',
     langLabel: 'العربية',
     invalidCredentials: 'Invalid credentials! Please check your username and password.',
+    noAccount: "Don't have an account?",
+    managementExcellence: 'Management Excellence',
   },
   ar: {
-    portalTitle: 'البوابة الطبية',
-    portalDesc: 'مرحباً بكم في منصتنا الصحية. يمكنكم الوصول إلى سجلاتكم الطبية والتواصل مع المتخصصين في الرعاية الصحية.',
+    portalTitle: 'نظام الأمل لإدارة المستشفيات',
+    portalDesc: 'نظام متكامل لإدارة المستشفيات مصمم لمساعدة الأطباء وتسهيل إدارة الأقسام الطبية بكفاءة عالية واحترافية.',
     signIn: 'تسجيل الدخول',
     signInDesc: 'أدخل بياناتك للمتابعة',
     username: 'اسم المستخدم',
@@ -35,6 +37,8 @@ const translations: Record<Lang, Record<string, string>> = {
     signUp: 'إنشاء حساب',
     langLabel: 'English',
     invalidCredentials: 'بيانات الدخول غير صحيحة! يرجى التأكد من اسم المستخدم وكلمة المرور.',
+    noAccount: "ليس لديك حساب؟",
+    managementExcellence: 'تميز في الإدارة',
   },
 };
 
@@ -274,10 +278,14 @@ function App() {
         {/* Content Overlay */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-white p-12">
           <Logo />
-          <h1 className="text-4xl font-bold mb-4 text-center">{t.portalTitle}</h1>
-          <p className="text-lg opacity-80 text-center max-w-md">
-            {t.portalDesc}
-          </p>
+          <h1 className="text-5xl font-black mb-6 text-center tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">
+            {t.portalTitle}
+          </h1>
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20 max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.3)] transform transition-all duration-500 hover:scale-[1.02]">
+            <p className="text-xl text-center leading-relaxed font-light italic">
+              "{t.portalDesc}"
+            </p>
+          </div>
         </div>
       </div>
 
@@ -301,6 +309,13 @@ function App() {
             <p className="text-gray-500 text-sm mt-1">{t.portalDesc}</p>
           </div>
           <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              {t.managementExcellence}
+            </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-2">{t.signIn}</h2>
             <p className="text-gray-500">{t.signInDesc}</p>
           </div>

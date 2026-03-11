@@ -22,6 +22,8 @@ import Appointment from "./appointment";
 import Services from "./services";
 import DoctorManagement from "./doctor_management";
 import Doctors from "./doctors";
+import PharmacyInventory from "./pharmacy_inventory";
+import Pharmacy from "./pharmacy";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -30,9 +32,11 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<App />} />
         <Route path="/setting" element={<Setting />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/pharmacy" element={<Pharmacy />} />
         <Route path="/patient" element={<Patient />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/dispense" element={<Dispense />} />
+        <Route path="/pharmacy-inventory" element={<PharmacyInventory />} />
         <Route path="/laboratory" element={<Laboratory />} />
         <Route path="/appointment" element={<Appointment />} />
         <Route path="/reception" element={<Reception />} />

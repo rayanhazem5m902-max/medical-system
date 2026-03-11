@@ -1,44 +1,15 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
-  CalendarDays,
-  UserPlus,
-  Settings,
-  LogOut,
-  Search,
-  Bell,
-  ChevronLeft,
   Calendar,
-  Save,
   X,
-  Info,
-  ShieldCheck,
-  HelpCircle,
-  Heart,
-  Menu,
-  ChevronDown,
-  Building2,
-  Briefcase,
-  Mail,
-  Phone,
-  CreditCard,
-  User,
-  Activity,
-  Plus,
   Filter,
   CheckCircle2,
-  AlertCircle,
   MoreVertical,
   Clock,
-  MapPin,
-  Trash2,
-  Edit2,
-  MessageSquare,
-  Globe,
   Printer,
-  UserCog,
   Pill,
   Microscope,
   UsersRound,
@@ -46,9 +17,18 @@ import {
   Warehouse,
   Layers,
   Wallet,
-  FileText,
   Coins,
   ClipboardList,
+  UserCog,
+  Briefcase,
+  Activity,
+  Settings,
+  LogOut,
+  Menu,
+  Search,
+  Globe,
+  MessageSquare,
+  Bell
 } from 'lucide-react';
 
 const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
@@ -181,7 +161,6 @@ const translations = {
     pharmacyWarehouse: 'إدارة الصيدلية والمخزون',
     deptManagement: 'إدارة الأقسام',
     financialManagement: 'الإدارة المالية',
-    financialReports: 'التقارير المالية',
     payrollManagement: 'إدارة الرواتب',
     settings: 'الإعدادات',
     notifications: 'التنبيهات',
@@ -194,7 +173,10 @@ const translations = {
     today: 'اليوم',
     cancelled: 'ملغي',
     confirmed: 'مؤكد',
-    inProgress: 'قيد التنفيذ'
+    inProgress: 'قيد التنفيذ',
+    messageAll: 'إرسال رسالة لكل المرضى',
+    notifyCancellation: 'إبلاغ بإلغاء المواعيد',
+    cancellationSms: "نأسف لإبلاغكم بإلغاء موعدكم اليوم مع {doctor}. نرجو منكم مراجعة الاستقبال لإعادة الجدولة.",
   },
   en: {
     hospitalName: 'Al-Shifa Hospital',
@@ -212,7 +194,6 @@ const translations = {
     pharmacyWarehouse: 'Pharmacy & Warehouse',
     deptManagement: 'Departments Management',
     financialManagement: 'Financial Management',
-    financialReports: 'Financial Reports',
     payrollManagement: 'Payroll Management',
     settings: 'Settings',
     notifications: 'Notifications',
@@ -225,7 +206,10 @@ const translations = {
     today: 'Today',
     cancelled: 'Cancelled',
     confirmed: 'Confirmed',
-    inProgress: 'In Progress'
+    inProgress: 'In Progress',
+    messageAll: 'Message All Patients',
+    notifyCancellation: 'Notify of Cancellation',
+    cancellationSms: "We regret to inform you that your appointment with {doctor} today has been cancelled. Please contact reception to reschedule.",
   }
 };
 
@@ -234,7 +218,7 @@ const translations = {
 export default function AppointmentPage() {
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [cancellationStatus, setCancellationStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [cancellationStatus] = useState<"pending" | "approved" | "rejected">("pending");
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [showDoctorModal, setShowDoctorModal] = useState(false);
   const [selectedDoctorModal, setSelectedDoctorModal] = useState<string | null>(null);
@@ -267,9 +251,15 @@ export default function AppointmentPage() {
     { id: 'pharma-mgmt', label: t.pharmacyWarehouse, icon: Warehouse },
     { id: 'dept-mgmt', label: t.deptManagement, icon: Layers },
     { id: 'fin-mgmt', label: t.financialManagement, icon: Wallet },
-    { id: 'fin-reports', label: t.financialReports, icon: FileText },
     { id: 'payroll-mgmt', label: t.payrollManagement, icon: Coins },
+    { id: 'settings', label: t.settings, icon: Settings },
   ];
+
+  const [dayOffRequests, setDayOffRequests] = useState([
+    { id: 1, doctor: isRTL ? 'د. محمد علي' : 'Dr. Mohamed Ali', date: '2024-03-11', status: 'pending' },
+    { id: 2, doctor: isRTL ? 'د. ليلى أحمد' : 'Dr. Layla Ahmed', date: '2024-03-12', status: 'pending' },
+  ]);
+  const [showDayOffPanel, setShowDayOffPanel] = useState(false);
 
   const [smsMessage, setSmsMessage] = useState(
     isRTL
@@ -296,9 +286,16 @@ export default function AppointmentPage() {
       setTimeout(() => {
         setShowSmsModal(false);
         setSmsSent(false);
-        showToast("📱 SMS sent successfully to all patients.", "bg-blue-600");
+        showToast(isRTL ? "📱 تم إرسال الرسالة لجميع المرضى بنجاح" : "📱 SMS sent successfully to all patients.", "bg-blue-600");
       }, 1500);
     }, 2000);
+  };
+
+  const handleNotifyDoctorPatients = (doctor: string) => {
+    const msg = t.cancellationSms.replace('{doctor}', doctor);
+    setSmsMessage(msg);
+    setShowDoctorModal(false);
+    setShowSmsModal(true);
   };
 
   const isMonCancelled = cancellationStatus === "approved";
@@ -333,12 +330,12 @@ export default function AppointmentPage() {
       )}>
         <div className="p-8 pb-4">
           <div className="flex items-center gap-4 group">
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-[#1a4fa0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
               <Activity className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-lg font-black tracking-tight text-slate-900">{isRTL ? 'مستشفى الشفاء' : 'Al-Shifa'}</h1>
-              <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
+              <p className="text-[10px] text-[#1a4fa0] font-bold uppercase tracking-widest leading-none mt-1">Medical Center</p>
             </div>
           </div>
         </div>
@@ -353,15 +350,17 @@ export default function AppointmentPage() {
                 if (item.id === 'reception') navigate('/reception');
                 if (item.id === 'dash') navigate('/dashboard');
                 if (item.id === 'patients') navigate('/patients');
-                if (item.id === 'pharmacy') navigate('/dispense');
+                if (item.id === 'pharmacy') navigate('/pharmacy');
                 if (item.id === 'laboratory') navigate('/laboratory');
+                if (item.id === 'doctors') navigate('/doctors');
+                if (item.id === 'appts') navigate('/appointment');
               }}
               className={cn(
                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group relative",
-                item.id === 'appts' ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                item.id === 'appts' ? "bg-[#1a4fa0] text-white shadow-xl shadow-blue-600/20" : "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
               )}
             >
-              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'appts' ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+              <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", item.id === 'appts' ? "text-white" : "text-slate-400 group-hover:text-[#1a4fa0]")} />
               <span className="font-bold text-sm">{item.label}</span>
               {item.id === 'appts' && <span className="absolute right-4 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />}
             </button>
@@ -379,31 +378,21 @@ export default function AppointmentPage() {
                 if (item.id === 'doc-mgmt') navigate('/doctor-management');
                 if (item.id === 'emp-mgmt') navigate('/employee');
                 if (item.id === 'dept-mgmt') navigate('/department');
-                if (item.id === 'pharma-mgmt') navigate('/dispense');
+                if (item.id === 'pharma-mgmt') navigate('/pharmacy-inventory');
                 if (item.id === 'fin-mgmt') navigate('/payroll');
-                if (item.id === 'fin-reports') navigate('/reports');
                 if (item.id === 'payroll-mgmt') navigate('/salary-management');
+                if (item.id === 'settings') navigate('/setting');
               }}
               className={cn(
                 "w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-sm font-bold group",
-                "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+                "text-slate-500 hover:bg-slate-50 hover:text-[#1a4fa0]"
               )}
             >
-              <item.icon className="w-5 h-5 transition-transform group-hover:scale-110 text-slate-400 group-hover:text-blue-600" />
+              <item.icon className="w-5 h-5 transition-transform group-hover:scale-110 text-slate-400 group-hover:text-[#1a4fa0]" />
               <span className="font-bold text-sm">{item.label}</span>
             </button>
           ))}
         </nav>
-
-        <div className="p-4 border-t border-slate-100 mx-2 mb-2">
-          <button
-            onClick={() => navigate('/setting')}
-            className="w-full flex items-center gap-4 px-6 py-2.5 rounded-xl transition-all duration-300 text-slate-500 hover:bg-slate-50 hover:text-blue-600"
-          >
-            <Settings className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
-            <span className="text-sm font-bold">{t.settings}</span>
-          </button>
-        </div>
 
         <div className="p-4 border-t border-slate-100 mx-2 pb-8 bg-slate-50/50 rounded-b-[40px]">
           <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-200 shadow-sm">
@@ -443,10 +432,63 @@ export default function AppointmentPage() {
                 className={cn("w-full py-2.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-blue-500/5 rounded-2xl text-sm font-medium outline-none transition-all", isRTL ? "pr-12 pl-4" : "pl-12 pr-4")}
               />
             </div>
-            <button className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-2xl text-xs font-black shadow-lg shadow-blue-200 hover:bg-blue-700 hover:scale-[1.02] transition-all">
-              <Plus className="w-4 h-4" />
-              <span>{isRTL ? 'موعد جديد' : 'NEW APPOINTMENT'}</span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowDayOffPanel(!showDayOffPanel)}
+                className="p-3 bg-slate-50 text-slate-500 hover:text-blue-600 rounded-2xl border border-slate-100 transition-all active:scale-95 group relative"
+              >
+                <Bell className="w-5 h-5 group-hover:shake" />
+                {dayOffRequests.length > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />}
+              </button>
+
+              {showDayOffPanel && (
+                <div className={cn("absolute top-full mt-4 w-80 bg-white border border-slate-100 shadow-2xl rounded-3xl p-6 z-50 animate-in fade-in slide-in-from-top-4 duration-300", isRTL ? "right-0" : "left-0")}>
+                  <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-50">
+                    <h4 className="text-sm font-black text-slate-900">{isRTL ? 'طلبات الإجازة' : 'Day Off Requests'}</h4>
+                    <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{dayOffRequests.length}</span>
+                  </div>
+                  <div className="space-y-4 max-h-64 overflow-y-auto no-scrollbar">
+                    {dayOffRequests.map(req => (
+                      <div key={req.id} className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group transition-all hover:bg-white hover:shadow-md">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0"><UserCog className="w-4 h-4" /></div>
+                          <div>
+                            <p className="text-xs font-black text-slate-800">{req.doctor}</p>
+                            <p className="text-[9px] text-slate-400 font-bold uppercase">{req.date}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setDayOffRequests(prev => prev.filter(r => r.id !== req.id));
+                              showToast(isRTL ? "تمت الموافقة على الطلب" : "Request Approved", "bg-emerald-600");
+                            }}
+                            className="flex-1 py-2 bg-emerald-500 text-white rounded-xl text-[10px] font-black hover:bg-emerald-600 transition-colors"
+                          >
+                            {t.approve}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setDayOffRequests(prev => prev.filter(r => r.id !== req.id));
+                              showToast(isRTL ? "تم رفض الطلب" : "Request Rejected", "bg-red-600");
+                            }}
+                            className="flex-1 py-2 bg-slate-200 text-slate-600 rounded-xl text-[10px] font-black hover:bg-slate-300 transition-colors"
+                          >
+                            {t.reject}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    {dayOffRequests.length === 0 && (
+                      <div className="text-center py-8">
+                        <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3"><Bell className="w-6 h-6 text-slate-300" /></div>
+                        <p className="text-xs font-bold text-slate-400">{isRTL ? 'لا توجد طلبات معلقة' : 'No pending requests'}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
@@ -572,7 +614,11 @@ export default function AppointmentPage() {
             <div className="p-6 space-y-8">
               {/* Stats */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 bg-blue-50 rounded-3xl border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" onClick={() => setShowSmsModal(true)}>
+                <div className="p-4 bg-blue-50 rounded-3xl border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" onClick={() => {
+                  setSelectedDoctorModal(null);
+                  setSmsMessage(isRTL ? "تنبيه هام من مستشفى الشفاء: نرجو من مراجعينا الكرام..." : "Important alert from Al-Shifa Hospital: We kindly ask our patients...");
+                  setShowSmsModal(true);
+                }}>
                   <MessageSquare className="w-5 h-5 text-blue-600 mb-2" />
                   <p className="text-xs font-black text-blue-900">{isRTL ? 'إرسال SMS' : 'Send SMS'}</p>
                   <p className="text-[9px] font-bold text-blue-500 mt-1 uppercase tracking-widest">{isRTL ? 'تنبيه سريع' : 'Quick Alert'}</p>
@@ -690,9 +736,15 @@ export default function AppointmentPage() {
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isRTL ? 'المستلمون' : 'Recipients'}</label>
                   <div className="flex flex-wrap gap-2">
-                    {["All", "Monday Patients", "Today's Clinic"].map(r => (
-                      <span key={r} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600">{r}</span>
-                    ))}
+                    {selectedDoctorModal ? (
+                      <span className="px-4 py-2 bg-blue-50 border border-blue-200 rounded-xl text-[10px] font-black text-blue-700">
+                        {isRTL ? `مرضى ${selectedDoctorModal}` : `${selectedDoctorModal}'s Patients`}
+                      </span>
+                    ) : (
+                      ["All", "Monday Patients", "Today's Clinic"].map(r => (
+                        <span key={r} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600">{r}</span>
+                      ))
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -758,9 +810,21 @@ export default function AppointmentPage() {
                   ))}
                 </div>
               </div>
-              <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button onClick={() => setShowDoctorModal(false)} className="px-8 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-black hover:bg-slate-50 transition-all">CLOSE</button>
-                <button className="px-8 py-3 bg-blue-600 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">PRINT CLINIC LIST</button>
+              <div className="p-8 bg-slate-50 border-t border-slate-100 flex flex-wrap justify-between items-center gap-4">
+                <div className="flex gap-2">
+                  <button onClick={() => setShowDoctorModal(false)} className="px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-black hover:bg-slate-50 transition-all uppercase">{isRTL ? 'إغلاق' : 'CLOSE'}</button>
+                  <button className="px-6 py-3 bg-white border border-slate-200 text-blue-600 rounded-xl text-xs font-black hover:bg-slate-50 transition-all flex items-center gap-2 uppercase">
+                    <Printer className="w-4 h-4" />
+                    {isRTL ? 'طباعة القائمة' : 'PRINT LIST'}
+                  </button>
+                </div>
+                <button 
+                  onClick={() => selectedDoctorModal && handleNotifyDoctorPatients(selectedDoctorModal)}
+                  className="px-8 py-3 bg-red-600 text-white rounded-xl text-xs font-black shadow-lg shadow-red-100 hover:bg-red-700 transition-all flex items-center gap-2 uppercase"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  {t.notifyCancellation}
+                </button>
               </div>
             </div>
           </div>
